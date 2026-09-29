@@ -1632,7 +1632,7 @@
 
     <script>
     // ============================================================
-    // SPOTUBE - Versione con sincronizzazione perfetta del floating player
+    // SPOTUBE - Versione ANTI-PUBBLICITÀ: audio HTML5 prioritario
     // ============================================================
     const app = (function() {
         const API_KEY = 'AIzaSyBIa5Se73P09TNGcSSvRNUiYgH6DJmU8T8';
@@ -1647,11 +1647,18 @@
             ['#ff7043', '#bf360c'], ['#ec407a', '#880e4f']
         ];
 
+        // Più servizi possibili per non dover MAI usare YouTube
         const FAST_SERVICES = [
             { url: (id) => `https://pipedapi.kavin.rocks/streams/${id}` },
             { url: (id) => `https://pipedapi.adminforge.de/streams/${id}` },
             { url: (id) => `https://api.piped.private.coffee/streams/${id}` },
-            { url: (id) => `https://pipedapi.reallyaweso.me/streams/${id}` }
+            { url: (id) => `https://pipedapi.reallyaweso.me/streams/${id}` },
+            { url: (id) => `https://pipedapi.ducks.party/streams/${id}` },
+            { url: (id) => `https://inv.nadeko.net/api/v1/videos/${id}` },
+            { url: (id) => `https://invidious.nerdvpn.de/api/v1/videos/${id}` },
+            { url: (id) => `https://invidious.jing.rocks/api/v1/videos/${id}` },
+            { url: (id) => `https://yewtu.be/api/v1/videos/${id}` },
+            { url: (id) => `https://iv.melmac.space/api/v1/videos/${id}` }
         ];
 
         const state = {
@@ -1840,23 +1847,32 @@
         });
 
         // ============================================================
-        // YouTube fallback
+        // YouTube fallback: uso youtube-nocookie per ridurre ads e tracking
         // ============================================================
         const loadYTIframe = (videoId) => {
             const origin = window.location.origin && window.location.origin !== 'null'
                 ? window.location.origin : 'http://localhost';
-            const embedUrl = `https://www.youtube.com/embed/${videoId}`
-                + `?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0`
-                + `&iv_load_policy=3&cc_load_policy=0&fs=0&disablekb=1`
+            // Uso youtube-nocookie.com + tutti i parametri che riducono ads e overlay
+            const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`
+                + `?autoplay=1`
+                + `&rel=0`                 // no video correlati
+                + `&modestbranding=1`      // nasconde logo YouTube
+                + `&playsinline=1`
+                + `&controls=0`
+                + `&iv_load_policy=3`      // nasconde le annotazioni (spesso ads overlay)
+                + `&cc_load_policy=0`
+                + `&fs=0`
+                + `&disablekb=1`
                 + `&enablejsapi=1`
                 + `&origin=${encodeURIComponent(origin)}`;
             ytFallback.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
         };
 
         // ============================================================
-        // RICERCA AUDIO
+        // RICERCA AUDIO - Attende fino a 3s per NON usare YouTube
         // ============================================================
         const getAudioUrl = async (videoId) => {
+            // Cache
             if (state.audioUrlCache[videoId]) {
                 const c = state.audioUrlCache[videoId];
                 if (c.timestamp && (Date.now() - c.timestamp) < 30 * 60 * 1000) {
@@ -1866,13 +1882,14 @@
 
             const fetchAudio = async (service) => {
                 const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 1500);
+                const timeout = setTimeout(() => controller.abort(), 3500); // 3.5s - più tempo per rispondere
                 try {
                     const res = await fetch(service.url(videoId), { signal: controller.signal });
                     clearTimeout(timeout);
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     const data = await res.json();
                     if (data.audioStreams && data.audioStreams.length > 0) {
+                        // Preferisci audio/mp4 (più compatibile) di qualità media
                         const a = data.audioStreams.find(s => s.mimeType && s.mimeType.includes('audio/mp4'))
                                || data.audioStreams.find(s => s.mimeType && s.mimeType.startsWith('audio/'))
                                || data.audioStreams[0];
@@ -1905,27 +1922,21 @@
         };
 
         // ============================================================
-        // SINCRONIZZAZIONE UI - FUNZIONE UNICA CHE AGGIORNA TUTTO
+        // AGGIORNAMENTO UI UNIFICATO
         // ============================================================
         const updateAllUI = () => {
-            // Aggiorna i tempi
             const currentStr = formatTime(state.currentTime);
             const totalStr = formatTime(state.duration);
 
-            // Player inferiore
             timeCurrent.textContent = currentStr;
             timeTotal.textContent = totalStr;
-
-            // Floating player
             fpTimeCurrent.textContent = currentStr;
             fpTimeTotal.textContent = totalStr;
 
-            // Barra progresso (percentuale)
             const percent = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
             progressBarFill.style.width = percent + '%';
             fpProgressBarFill.style.width = percent + '%';
 
-            // Icone play/pausa
             if (state.isPlaying) {
                 playPauseIcon.className = 'fas fa-pause';
                 fpPlayPauseIcon.className = 'fas fa-pause';
@@ -1947,35 +1958,26 @@
             }
         };
 
-        // ============================================================
-        // PROGRESS TRACKING - Aggiorna UI ogni 250ms
-        // ============================================================
         const startProgress = () => {
             if (state.progressInterval) clearInterval(state.progressInterval);
             state.progressInterval = setInterval(() => {
                 if (!state.currentTrack) return;
 
                 if (!state.usingFallback) {
-                    // Player audio HTML5 (tempo reale)
                     state.currentTime = audioPlayer.currentTime || 0;
                     if (audioPlayer.duration && !isNaN(audioPlayer.duration) && audioPlayer.duration > 0) {
                         state.duration = audioPlayer.duration;
                     }
                 } else {
-                    // Player YouTube - simula avanzamento con velocità 1x (0.5s ogni 500ms)
-                    // MA solo se è effettivamente in play
                     if (state.isPlaying) {
                         state.currentTime = Math.min(state.currentTime + 0.25, state.duration);
                     }
                 }
 
                 updateAllUI();
-            }, 250); // Aggiorna 4 volte al secondo per fluidità
+            }, 250);
         };
 
-        // ============================================================
-        // AUDIO PLAYER EVENTS
-        // ============================================================
         audioPlayer.addEventListener('play', () => {
             state.isPlaying = true;
             updateAllUI();
@@ -2025,7 +2027,7 @@
         };
 
         // ============================================================
-        // PLAY TRACK
+        // PLAY TRACK - AUDIO FIRST (aspetta fino a 3s per evitare YouTube)
         // ============================================================
         const playTrack = async (track, queue = null, index = -1) => {
             if (!track) return;
@@ -2044,6 +2046,7 @@
             state.currentTime = 0;
             state.duration = state.durationCache[track.videoId] || 0;
             state.isPlaying = true;
+            state.usingFallback = false;
 
             playerTitle.textContent = track.title;
             playerChannel.textContent = track.channel;
@@ -2053,13 +2056,12 @@
             fpCover.src = track.thumbnail || DEFAULT_THUMB;
             updateFavButtonUI();
 
-            // Reset visivo immediato
             updateAllUI();
 
             try { audioPlayer.pause(); } catch (e) {}
             audioPlayer.removeAttribute('src');
 
-            // CACHE
+            // CACHE audio → riproduzione istantanea senza ads
             if (state.audioUrlCache[track.videoId]) {
                 const c = state.audioUrlCache[track.videoId];
                 if (c.timestamp && (Date.now() - c.timestamp) < 30 * 60 * 1000) {
@@ -2080,29 +2082,38 @@
                 }
             }
 
-            // Avvia subito YouTube come fallback
-            state.usingFallback = true;
-            loadYTIframe(track.videoId);
-            sendYT('setVolume', String(state.isMuted ? 0 : Math.round(state.volume)));
+            // NON avvio YouTube subito! Aspetto l'audio diretto.
+            // Mostra un toast per far capire che sta caricando
+            showToast('Caricamento brano...', 'fa-spinner fa-spin', 'info');
 
-            // In background, cerca audio HTML5
-            getAudioUrl(track.videoId).then(url => {
-                if (playId !== state.currentPlayId) return;
-                if (url) {
-                    state.usingFallback = false;
-                    state.duration = state.durationCache[track.videoId] || 240;
-                    audioPlayer.src = url;
-                    audioPlayer.volume = state.isMuted ? 0 : state.volume / 100;
-                    audioPlayer.play().then(() => {
-                        sendYT('pauseVideo');
-                        ytFallback.innerHTML = '';
-                        updateAllUI();
-                    }).catch(() => {
-                        state.usingFallback = true;
-                        loadYTIframe(track.videoId);
-                    });
+            // Aspetta l'audio (fino a 3.5s)
+            const url = await getAudioUrl(track.videoId);
+
+            if (playId !== state.currentPlayId) return;
+
+            if (url) {
+                // ✅ AUDIO HTML5 → NESSUNA PUBBLICITÀ
+                state.usingFallback = false;
+                state.duration = state.durationCache[track.videoId] || 240;
+                audioPlayer.src = url;
+                audioPlayer.volume = state.isMuted ? 0 : state.volume / 100;
+                try {
+                    await audioPlayer.play();
+                    console.log('▶️ Audio HTML5 senza ads');
+                } catch (e) {
+                    console.warn('Autoplay bloccato, uso YouTube');
+                    state.usingFallback = true;
+                    loadYTIframe(track.videoId);
                 }
-            });
+                updateAllUI();
+            } else {
+                // ❌ Nessun audio → YouTube fallback (con ads, ma senza alternative)
+                console.log('⚠️ Servizi audio non disponibili, uso YouTube');
+                state.usingFallback = true;
+                loadYTIframe(track.videoId);
+                sendYT('setVolume', String(state.isMuted ? 0 : Math.round(state.volume)));
+                showToast('Uso YouTube di riserva (con pubblicità)', 'fa-info-circle', 'warning');
+            }
 
             startProgress();
             addToHistory(track);
@@ -2111,7 +2122,6 @@
             fetchDuration(track.videoId).then(d => {
                 if (playId === state.currentPlayId) {
                     state.durationCache[track.videoId] = d;
-                    // Aggiorna la durata mostrata se è ancora 0
                     if (!state.duration || state.duration < 1) {
                         state.duration = d;
                         updateAllUI();
@@ -2172,9 +2182,7 @@
             repeatBtn.classList.toggle('active', state.isRepeat);
         };
 
-        // ============================================================
         // FLOATING PLAYER
-        // ============================================================
         let isDragging = false;
         let dragOffsetX = 0;
         let dragOffsetY = 0;
@@ -2248,7 +2256,6 @@
             }
             floatingPlayer.classList.add('visible');
             floatingToggle.classList.remove('visible');
-            // Aggiorna subito i dati al momento dell'apertura
             updateAllUI();
             setTimeout(applySavedPosition, 50);
         };
@@ -2298,9 +2305,7 @@
             }
         });
 
-        // ============================================================
         // VOLUME
-        // ============================================================
         const setVolumeFromEvent = (e) => {
             const rect = volumeSlider.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -2345,9 +2350,7 @@
             saveStorage();
         });
 
-        // ============================================================
         // SEEK
-        // ============================================================
         let progressDragging = false;
         const seekFromEvent = (e) => {
             const rect = progressBar.getBoundingClientRect();
@@ -3060,7 +3063,7 @@
             renderPlaylistMiniList();
             applyVolume();
             renderHome();
-            console.log('🚀 Spotube pronto');
+            console.log('🚀 Spotube pronto (audio-first, no ads)');
         };
 
         return { init, showHome, playTrack };
