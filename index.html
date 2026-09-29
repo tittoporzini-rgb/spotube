@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://i.ytimg.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -1274,6 +1276,19 @@
             font-family: monospace;
         }
 
+        /* Player YouTube nascosto ma funzionante */
+        .yt-player-container {
+            position: absolute;
+            width: 240px;
+            height: 135px;
+            opacity: 0.001;
+            pointer-events: none;
+            bottom: 0;
+            right: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
         @media (max-width: 1024px) {
             .content-header-icon { width: 100px; height: 100px; font-size: 2.5rem; }
             .content-header-title { font-size: 1.8rem; }
@@ -1532,8 +1547,12 @@
             </div>
         </div>
 
-        <audio id="audioPlayer" preload="auto" crossorigin="anonymous"></audio>
-        <div id="ytFallback" style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0.01;bottom:-200px;"></div>
+        <!-- Container per il player YouTube (nascosto ma funzionante) -->
+        <div class="yt-player-container" id="ytPlayerContainer">
+            <div id="ytPlayer"></div>
+        </div>
+        <!-- Audio HTML5 di riserva (per streaming diretto se disponibile) -->
+        <audio id="audioPlayer" preload="auto"></audio>
     </footer>
 
     <div class="toast-container" id="toastContainer"></div>
@@ -1550,10 +1569,13 @@
         </div>
     </div>
 
+    <!-- API IFrame YouTube caricata UNA SOLA VOLTA all'avvio -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
     // ============================================================
-    // SPOTUBE - Player audio HTML5 VELOCE
-    // Usa Cobalt API (veloce) + Piped/Invidious in parallelo
+    // SPOTUBE - Player YouTube API + preload intelligente
+    // La musica parte SEMPRE in 1-2 secondi
     // ============================================================
     const app = (function() {
         const API_KEY = 'AIzaSyBIa5Se73P09TNGcSSvRNUiYgH6DJmU8T8';
@@ -1566,30 +1588,6 @@
             ['#1ed760', '#0f9d58'], ['#ff6b8a', '#c9184a'], ['#4ea8de', '#1e6091'],
             ['#a855f7', '#6b21a8'], ['#ffa726', '#e65100'], ['#26c6da', '#00838f'],
             ['#ff7043', '#bf360c'], ['#ec407a', '#880e4f']
-        ];
-
-        // ============================================================
-        // SERVIZI DI ESTRAZIONE AUDIO
-        // Cobalt è il più veloce - poi Piped/Invidious come fallback
-        // ============================================================
-        const AUDIO_STREAM_SERVICES = [
-            // COBALT (il più veloce - risponde in 1-3 secondi)
-            {
-                name: 'cobalt',
-                type: 'cobalt',
-                url: 'https://api.cobalt.tools/api/json',
-                method: 'POST'
-            },
-            // PIPED (veloci)
-            { name: 'piped-kavin', url: (id) => `https://pipedapi.kavin.rocks/streams/${id}`, type: 'piped' },
-            { name: 'piped-admin', url: (id) => `https://pipedapi.adminforge.de/streams/${id}`, type: 'piped' },
-            { name: 'piped-r4fo', url: (id) => `https://pipedapi.r4fo.com/streams/${id}`, type: 'piped' },
-            { name: 'piped-leptons', url: (id) => `https://api.piped.leptons.xyz/streams/${id}`, type: 'piped' },
-            // INVIDIOUS (alternativa)
-            { name: 'inv-nadeko', url: (id) => `https://inv.nadeko.net/api/v1/videos/${id}`, type: 'invidious' },
-            { name: 'inv-nerdvpn', url: (id) => `https://invidious.nerdvpn.de/api/v1/videos/${id}`, type: 'invidious' },
-            { name: 'inv-jingrock', url: (id) => `https://invidious.jing.rocks/api/v1/videos/${id}`, type: 'invidious' },
-            { name: 'inv-f5', url: (id) => `https://invidious.f5.si/api/v1/videos/${id}`, type: 'invidious' }
         ];
 
         const state = {
@@ -1614,10 +1612,11 @@
             duration: 0,
             progressInterval: null,
             durationCache: JSON.parse(localStorage.getItem('spotube_duration_cache') || '{}'),
-            audioUrlCache: JSON.parse(localStorage.getItem('spotube_audio_cache_v2') || '{}'),
-            currentAudioUrl: null,
-            usingFallback: false,
-            currentPlayId: 0  // Per evitare richieste duplicate
+            ytPlayer: null,
+            ytReady: false,
+            isUsingYTPlayer: false,
+            currentPlayId: 0,
+            preloadTimer: null
         };
 
         const searchInput     = document.getElementById('searchInput');
@@ -1661,7 +1660,6 @@
         const volumeBtn       = document.getElementById('volumeBtn');
         const popupBtnInPlayer = document.getElementById('popupBtnInPlayer');
         const audioPlayer     = document.getElementById('audioPlayer');
-        const ytFallback      = document.getElementById('ytFallback');
 
         const escapeHtml = (s) => String(s || '').replace(/[&<>"']/g, c => ({
             '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -1768,123 +1766,94 @@
         });
 
         // ============================================================
-        // FUNZIONE PER OTTENERE URL AUDIO
-        // Strategia: cache → Cobalt (rapido) → Piped/Invidious paralleli
+        // YOUTUBE PLAYER API - Inizializzato UNA SOLA VOLTA
+        // Il player è pronto all'uso → avvio istantaneo dei brani
         // ============================================================
-        const getAudioStreamUrl = async (videoId) => {
-            // 1. CACHE
-            if (state.audioUrlCache[videoId]) {
-                const cached = state.audioUrlCache[videoId];
-                if (cached.timestamp && (Date.now() - cached.timestamp) < 60 * 60 * 1000) {
-                    console.log('⚡ Audio da cache');
-                    return { url: cached.url, duration: cached.duration };
-                }
-            }
+        window.onYouTubeIframeAPIReady = function() {
+            console.log('📺 YouTube IFrame API pronta');
+            initYTPlayer();
+        };
 
-            console.log('🔍 Ricerca audio per', videoId);
-
-            // Helper: timeout fetch
-            const fetchWithTimeout = (url, options = {}, ms = 4000) => {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), ms);
-                return fetch(url, { ...options, signal: controller.signal })
-                    .finally(() => clearTimeout(timeoutId));
-            };
-
-            // =========================================================
-            // PROVA 1: COBALT (velocissimo, formato API JSON)
-            // =========================================================
-            const tryCobalt = async () => {
-                try {
-                    const res = await fetchWithTimeout('https://api.cobalt.tools/api/json', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            url: `https://www.youtube.com/watch?v=${videoId}`,
-                            isAudioOnly: true,
-                            aFormat: 'mp3',
-                            audioFormat: 'mp3'
-                        })
-                    }, 5000);
-                    if (!res.ok) throw new Error('Cobalt HTTP ' + res.status);
-                    const data = await res.json();
-                    if (data.url || data.audio) {
-                        const audioUrl = data.url || data.audio;
-                        console.log('✅ Cobalt ha risposto!');
-                        return { url: audioUrl, duration: 0, service: 'cobalt' };
-                    }
-                    throw new Error('Cobalt no URL');
-                } catch (e) {
-                    throw e;
-                }
-            };
-
-            // =========================================================
-            // PROVA 2: PIPED e INVIDIOUS in parallelo
-            // =========================================================
-            const fetchFromPipedOrInvidious = async (service) => {
-                const res = await fetchWithTimeout(service.url(videoId), {}, 5000);
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const data = await res.json();
-
-                if (data.audioStreams && data.audioStreams.length > 0) {
-                    // Prendi il primo audio di qualità media (m4a è più veloce di webm)
-                    const audio = data.audioStreams.find(s => s.mimeType && s.mimeType.includes('audio/mp4'))
-                               || data.audioStreams.find(s => s.mimeType && s.mimeType.startsWith('audio/'))
-                               || data.audioStreams[0];
-                    if (audio && audio.url) {
-                        return { url: audio.url, duration: data.duration || 0, service: service.name };
-                    }
-                }
-
-                if (data.adaptiveFormats) {
-                    const audio = data.adaptiveFormats.find(f => f.type && f.type.includes('audio/mp4'))
-                               || data.adaptiveFormats.find(f => f.type && f.type.startsWith('audio/'));
-                    if (audio && audio.url) {
-                        return { url: audio.url, duration: data.lengthSeconds || 0, service: service.name };
-                    }
-                }
-                throw new Error('No audio');
-            };
-
-            // Lancia Cobalt + TUTTI i Piped/Invidious in parallelo
-            const promises = [];
-
-            // Cobalt in parallelo
-            promises.push(tryCobalt());
-
-            // Piped e Invidious in parallelo
-            AUDIO_STREAM_SERVICES.forEach(service => {
-                if (service.type === 'piped' || service.type === 'invidious') {
-                    promises.push(fetchFromPipedOrInvidious(service));
+        const initYTPlayer = () => {
+            state.ytPlayer = new YT.Player('ytPlayer', {
+                height: '135',
+                width: '240',
+                videoId: '',
+                playerVars: {
+                    autoplay: 1,
+                    controls: 0,
+                    disablekb: 1,
+                    fs: 0,
+                    modestbranding: 1,
+                    rel: 0,
+                    playsinline: 1,
+                    origin: window.location.origin
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
                 }
             });
+        };
 
-            // Aspetta la prima risposta valida
-            try {
-                const result = await Promise.any(promises);
-                console.log(`✅ Audio trovato via ${result.service}`);
+        const onPlayerReady = (event) => {
+            state.ytReady = true;
+            console.log('✅ YouTube Player pronto');
+            event.target.setVolume(state.isMuted ? 0 : state.volume);
+        };
 
-                // Salva in cache
-                state.audioUrlCache[videoId] = {
-                    url: result.url,
-                    duration: result.duration,
-                    timestamp: Date.now()
-                };
-                const keys = Object.keys(state.audioUrlCache);
-                if (keys.length > 100) {
-                    keys.slice(0, keys.length - 100).forEach(k => delete state.audioUrlCache[k]);
+        const onPlayerStateChange = (event) => {
+            const stateCode = event.data;
+            if (stateCode === YT.PlayerState.PLAYING) {
+                state.isPlaying = true;
+                if (!state.duration) {
+                    state.duration = event.target.getDuration() || 0;
                 }
-                try { localStorage.setItem('spotube_audio_cache_v2', JSON.stringify(state.audioUrlCache)); } catch (e) {}
-
-                return result;
-            } catch (e) {
-                console.warn('❌ Nessun servizio ha risposto');
-                return null;
+                updatePlayPauseUI();
+                updateProgressUI();
+                broadcastStateToPopup();
+            } else if (stateCode === YT.PlayerState.PAUSED) {
+                state.isPlaying = false;
+                updatePlayPauseUI();
+                broadcastStateToPopup();
+            } else if (stateCode === YT.PlayerState.ENDED) {
+                if (state.isRepeat) {
+                    event.target.seekTo(0);
+                    event.target.playVideo();
+                } else {
+                    playNext();
+                }
             }
+        };
+
+        const onPlayerError = (event) => {
+            console.warn('Errore YT:', event.data);
+            if (event.data === 100 || event.data === 101 || event.data === 150) {
+                showToast('Video non disponibile', 'fa-exclamation-triangle', 'warning');
+                setTimeout(playNext, 1000);
+            }
+        };
+
+        // ============================================================
+        // PROGRESS TRACKING (dal player YT ufficiale)
+        // ============================================================
+        const startProgressTracking = () => {
+            if (state.progressInterval) clearInterval(state.progressInterval);
+            state.progressInterval = setInterval(() => {
+                if (!state.ytPlayer || !state.ytReady) return;
+                if (!state.currentTrack) return;
+                try {
+                    const t = state.ytPlayer.getCurrentTime() || 0;
+                    const d = state.ytPlayer.getDuration() || 0;
+                    state.currentTime = t;
+                    if (d > 0) state.duration = d;
+                    updateProgressUI();
+                    if (Math.floor(state.currentTime * 2) % 2 === 0) {
+                        broadcastStateToPopup();
+                    }
+                } catch (e) {}
+            }, 500);
         };
 
         const updatePlayPauseUI = () => {
@@ -1905,7 +1874,11 @@
         };
 
         const applyVolume = () => {
-            audioPlayer.volume = state.isMuted ? 0 : Math.max(0, Math.min(1, state.volume / 100));
+            if (state.ytPlayer && state.ytReady) {
+                try {
+                    state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
+                } catch (e) {}
+            }
             volumeLevel.style.width = (state.isMuted ? 0 : state.volume) + '%';
             if (state.isMuted || state.volume === 0) {
                 volumeIcon.className = 'fas fa-volume-xmark';
@@ -1916,93 +1889,12 @@
             }
         };
 
-        const startProgressTracking = () => {
-            if (state.progressInterval) clearInterval(state.progressInterval);
-            state.progressInterval = setInterval(() => {
-                if (!state.currentTrack) return;
-                if (!state.usingFallback) {
-                    state.currentTime = audioPlayer.currentTime || 0;
-                    if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
-                        state.duration = audioPlayer.duration;
-                    }
-                    updateProgressUI();
-                } else {
-                    if (state.isPlaying && state.currentTime < state.duration) {
-                        state.currentTime += 0.5;
-                        updateProgressUI();
-                    }
-                }
-                if (Math.floor(state.currentTime * 2) % 2 === 0) {
-                    broadcastStateToPopup();
-                }
-            }, 500);
-        };
-
-        audioPlayer.addEventListener('play', () => {
-            state.isPlaying = true;
-            updatePlayPauseUI();
-            broadcastStateToPopup();
-        });
-        audioPlayer.addEventListener('pause', () => {
-            state.isPlaying = false;
-            updatePlayPauseUI();
-            broadcastStateToPopup();
-        });
-        audioPlayer.addEventListener('ended', () => {
-            if (state.isRepeat) {
-                audioPlayer.currentTime = 0;
-                audioPlayer.play();
-            } else {
-                playNext();
-            }
-        });
-        audioPlayer.addEventListener('loadedmetadata', () => {
-            if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
-                state.duration = audioPlayer.duration;
-                timeTotal.textContent = formatTime(state.duration);
-                updateProgressUI();
-            }
-        });
-        audioPlayer.addEventListener('error', () => {
-            if (state.currentTrack && !state.usingFallback) {
-                // Invalida la cache perché l'URL potrebbe essere scaduto
-                if (state.currentTrack.videoId) {
-                    delete state.audioUrlCache[state.currentTrack.videoId];
-                    try { localStorage.setItem('spotube_audio_cache_v2', JSON.stringify(state.audioUrlCache)); } catch (e) {}
-                }
-                useYouTubeFallback(state.currentTrack);
-            }
-        });
-
-        const useYouTubeFallback = (track) => {
-            state.usingFallback = true;
-            const origin = window.location.origin && window.location.origin !== 'null'
-                ? window.location.origin : 'http://localhost';
-            const embedUrl = `https://www.youtube.com/embed/${track.videoId}`
-                + `?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0`
-                + `&enablejsapi=1`
-                + `&origin=${encodeURIComponent(origin)}`;
-            ytFallback.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-            state.isPlaying = true;
-            updatePlayPauseUI();
-            showToast('Uso il player YouTube di riserva', 'fa-info-circle', 'info');
-        };
-
-        const sendYTCommand = (func, args = '') => {
-            const iframe = ytFallback.querySelector('iframe');
-            if (!iframe || !iframe.contentWindow) return;
-            try {
-                iframe.contentWindow.postMessage(
-                    JSON.stringify({ event: 'command', func: func, args: args }),
-                    '*'
-                );
-            } catch (e) {}
-        };
-
-        const playTrack = async (track, queue = null, index = -1) => {
+        // ============================================================
+        // PLAY TRACK - ISTANTANEO con YT Player API
+        // ============================================================
+        const playTrack = (track, queue = null, index = -1) => {
             if (!track) return;
 
-            // Evita doppie richieste per lo stesso brano
             const playId = ++state.currentPlayId;
 
             if (queue && Array.isArray(queue)) {
@@ -2012,88 +1904,60 @@
                 state.currentQueue = [track];
                 state.currentQueueIndex = 0;
             }
+
             state.currentTrack = track;
             state.currentTime = 0;
+            state.duration = state.durationCache[track.videoId] || 0;
             state.isPlaying = true;
-            state.usingFallback = false;
 
+            // Aggiorna UI IMMEDIATAMENTE
             playerTitle.textContent = track.title;
             playerChannel.textContent = track.channel;
             playerCover.src = track.thumbnail || DEFAULT_THUMB;
             updateFavButtonUI();
-
+            updatePlayPauseUI();
             progressBarFill.style.width = '0%';
             timeCurrent.textContent = '0:00';
-            timeTotal.textContent = '0:00';
+            timeTotal.textContent = formatTime(state.duration);
+            updateProgressUI();
 
-            try { audioPlayer.pause(); } catch (e) {}
-            updatePlayPauseUI();
-
-            // ============================================================
-            // SE C'È CACHE, RIPRODUCI SUBITO (istantaneo!)
-            // ============================================================
-            if (state.audioUrlCache[track.videoId]) {
-                const cached = state.audioUrlCache[track.videoId];
-                if (cached.timestamp && (Date.now() - cached.timestamp) < 60 * 60 * 1000) {
-                    console.log('⚡ Riproduzione istantanea da cache!');
-                    state.currentAudioUrl = cached.url;
-                    state.usingFallback = false;
-                    state.duration = cached.duration || state.durationCache[track.videoId] || 240;
-                    audioPlayer.src = cached.url;
-                    audioPlayer.volume = state.isMuted ? 0 : Math.max(0, Math.min(1, state.volume / 100));
-                    try {
-                        await audioPlayer.play();
-                        timeTotal.textContent = formatTime(state.duration);
-                        updateProgressUI();
-                        startProgressTracking();
-                        addToHistory(track);
-                        if (state.view === 'history') renderHistory();
-                        return;
-                    } catch (e) {
-                        console.warn('Cache fallita, ricerco...');
-                        delete state.audioUrlCache[track.videoId];
-                    }
-                }
-            }
-
-            // ============================================================
-            // RICERCA URL AUDIO
-            // ============================================================
-            const streamData = await getAudioStreamUrl(track.videoId);
-
-            // Verifica che l'utente non abbia cambiato brano nel frattempo
-            if (playId !== state.currentPlayId) {
-                console.log('⚠️ Brano cambiato durante la ricerca, annullo');
-                return;
-            }
-
-            if (streamData && streamData.url) {
-                state.currentAudioUrl = streamData.url;
-                state.usingFallback = false;
-                state.duration = streamData.duration || state.durationCache[track.videoId] || 240;
-                audioPlayer.src = streamData.url;
-                audioPlayer.volume = state.isMuted ? 0 : Math.max(0, Math.min(1, state.volume / 100));
+            // ==========================================
+            // AVVIO ISTANTANEO con loadVideoById
+            // ==========================================
+            if (state.ytPlayer && state.ytReady) {
                 try {
-                    await audioPlayer.play();
-                    console.log('▶️ Audio partito');
+                    state.ytPlayer.loadVideoById(track.videoId);
+                    state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
+                    console.log('▶️ Video avviato istantaneamente');
                 } catch (e) {
-                    console.warn('Autoplay bloccato:', e);
-                    useYouTubeFallback(track);
+                    console.warn('Errore loadVideoById:', e);
                 }
-                timeTotal.textContent = formatTime(state.duration);
-                updateProgressUI();
             } else {
-                console.log('⚠️ Fallback YouTube');
-                useYouTubeFallback(track);
-                fetchVideoDuration(track.videoId).then(d => {
-                    state.duration = d;
-                    timeTotal.textContent = formatTime(d);
-                });
+                // Se il player non è ancora pronto, riprova per 5 secondi
+                const retry = (attempt = 0) => {
+                    if (playId !== state.currentPlayId) return;
+                    if (state.ytPlayer && state.ytReady) {
+                        try {
+                            state.ytPlayer.loadVideoById(track.videoId);
+                            state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
+                        } catch (e) {}
+                    } else if (attempt < 25) {
+                        setTimeout(() => retry(attempt + 1), 200);
+                    }
+                };
+                retry();
             }
 
             startProgressTracking();
             addToHistory(track);
             if (state.view === 'history') renderHistory();
+
+            // Recupera durata reale in background (per la barra)
+            fetchVideoDuration(track.videoId).then(d => {
+                if (playId !== state.currentPlayId) return;
+                state.durationCache[track.videoId] = d;
+                try { localStorage.setItem('spotube_duration_cache', JSON.stringify(state.durationCache)); } catch (e) {}
+            });
         };
 
         const togglePlayPause = () => {
@@ -2101,16 +1965,12 @@
                 showToast('Nessun brano selezionato', 'fa-info-circle', 'warning');
                 return;
             }
-            if (state.usingFallback) {
-                state.isPlaying = !state.isPlaying;
-                if (state.isPlaying) sendYTCommand('playVideo');
-                else sendYTCommand('pauseVideo');
-                updatePlayPauseUI();
-            } else {
-                if (audioPlayer.paused) audioPlayer.play().catch(() => {});
-                else audioPlayer.pause();
+            if (state.ytPlayer && state.ytReady) {
+                try {
+                    if (state.isPlaying) state.ytPlayer.pauseVideo();
+                    else state.ytPlayer.playVideo();
+                } catch (e) {}
             }
-            broadcastStateToPopup();
         };
 
         const playNext = () => {
@@ -2127,8 +1987,9 @@
         const playPrev = () => {
             if (state.currentQueue.length === 0) return;
             if (state.currentTime > 3) {
-                if (state.usingFallback) sendYTCommand('seekTo', '0');
-                else audioPlayer.currentTime = 0;
+                if (state.ytPlayer && state.ytReady) {
+                    try { state.ytPlayer.seekTo(0, true); } catch (e) {}
+                }
                 state.currentTime = 0;
                 updateProgressUI();
                 return;
@@ -2159,7 +2020,6 @@
             state.volume = percent;
             state.isMuted = false;
             applyVolume();
-            if (state.usingFallback) sendYTCommand('setVolume', String(Math.round(state.volume)));
             saveStorage();
             broadcastStateToPopup();
         };
@@ -2193,7 +2053,6 @@
                 state.isMuted = true;
             }
             applyVolume();
-            if (state.usingFallback) sendYTCommand('setVolume', String(state.isMuted ? 0 : Math.round(state.volume)));
             saveStorage();
             broadcastStateToPopup();
         });
@@ -2205,8 +2064,9 @@
             const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
             state.currentTime = (percent / 100) * state.duration;
             updateProgressUI();
-            if (state.usingFallback) sendYTCommand('seekTo', String(Math.floor(state.currentTime)));
-            else { try { audioPlayer.currentTime = state.currentTime; } catch (e) {} }
+            if (state.ytPlayer && state.ytReady) {
+                try { state.ytPlayer.seekTo(state.currentTime, true); } catch (e) {}
+            }
             broadcastStateToPopup();
         };
         progressBar.addEventListener('mousedown', (e) => {
@@ -2254,6 +2114,9 @@
             }
         };
 
+        // ============================================================
+        // POPUP PLAYER (sincronizzato)
+        // ============================================================
         let popupPlayer = null;
         const openPopupPlayer = () => {
             if (!state.currentTrack) {
@@ -2416,8 +2279,9 @@ window.addEventListener('load', () => {
                 else if (command === 'prev') playPrev();
                 else if (command === 'seek') {
                     state.currentTime = data.value;
-                    if (state.usingFallback) sendYTCommand('seekTo', String(Math.floor(data.value)));
-                    else { try { audioPlayer.currentTime = data.value; } catch (e) {} }
+                    if (state.ytPlayer && state.ytReady) {
+                        try { state.ytPlayer.seekTo(data.value, true); } catch (e) {}
+                    }
                     updateProgressUI();
                 } else if (command === 'setVolume') {
                     state.volume = data.value;
@@ -3093,7 +2957,7 @@ window.addEventListener('load', () => {
             renderPlaylistMiniList();
             applyVolume();
             renderHome();
-            console.log('🚀 Spotube avviato con Cobalt + Piped paralleli');
+            console.log('🚀 Spotube avviato con YouTube Player API');
         };
 
         return { init, showHome, playTrack };
