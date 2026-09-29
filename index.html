@@ -92,7 +92,6 @@
         ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-        /* ============ TOP BAR ============ */
         .top-bar {
             display: flex;
             align-items: center;
@@ -107,7 +106,6 @@
             gap: 16px;
         }
 
-        /* Pulsante hamburger (visibile solo su mobile) */
         .menu-toggle {
             display: none;
             width: 40px;
@@ -249,7 +247,6 @@
 
         .main-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; position: relative; }
 
-        /* ============ SIDEBAR ============ */
         .sidebar {
             width: 250px;
             background: var(--bg-sidebar);
@@ -382,7 +379,6 @@
             color: var(--text-muted);
         }
 
-        /* Overlay per chiudere la sidebar su mobile */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -399,7 +395,6 @@
             opacity: 1;
         }
 
-        /* ============ CONTENUTO ============ */
         .content {
             flex: 1;
             overflow-y: auto;
@@ -685,7 +680,6 @@
         .card-action-btn.add-btn:hover { color: var(--accent); }
         .card-action-btn.pip-btn:hover { color: var(--accent-blue); }
 
-        /* ============ LISTA BRANI ============ */
         .tracks-list { display: flex; flex-direction: column; gap: 2px; }
 
         .track-row {
@@ -757,7 +751,6 @@
         .track-action-btn.active { color: var(--accent); }
         .track-action-btn.delete-btn:hover { color: var(--accent-red); background: rgba(255, 71, 87, 0.1); }
 
-        /* ============ STATI ============ */
         .status-message {
             display: flex;
             flex-direction: column;
@@ -780,7 +773,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ============ PLAYER ============ */
         .player-bar {
             background: var(--bg-player);
             border-top: 1px solid var(--border);
@@ -1282,10 +1274,6 @@
             font-family: monospace;
         }
 
-        /* ============================================================
-           RESPONSIVE
-           ============================================================ */
-
         @media (max-width: 1024px) {
             .content-header-icon { width: 100px; height: 100px; font-size: 2.5rem; }
             .content-header-title { font-size: 1.8rem; }
@@ -1295,12 +1283,8 @@
             .player-right { width: 220px; }
         }
 
-        /* Smartphone / Tablet - SIDEBAR A SCOMPARSA CON HAMBURGER */
         @media (max-width: 900px) {
-            /* Mostra il pulsante hamburger */
             .menu-toggle { display: flex; }
-
-            /* Sidebar diventa un drawer che si apre da sinistra */
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -1313,16 +1297,8 @@
                 padding-top: 20px;
                 overflow-y: auto;
             }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            /* Overlay visibile quando la sidebar è aperta */
-            .sidebar-overlay.visible {
-                display: block;
-            }
-
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.visible { display: block; }
             .top-bar { padding: 12px 16px; gap: 8px; }
             .logo { font-size: 1.2rem; }
             .logo i { font-size: 1.6rem; }
@@ -1556,7 +1532,7 @@
             </div>
         </div>
 
-        <audio id="audioPlayer" preload="auto"></audio>
+        <audio id="audioPlayer" preload="auto" crossorigin="anonymous"></audio>
         <div id="ytFallback" style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0.01;bottom:-200px;"></div>
     </footer>
 
@@ -1576,7 +1552,8 @@
 
     <script>
     // ============================================================
-    // SPOTUBE - Player audio HTML5 + servizi multipli + hamburger
+    // SPOTUBE - Player audio HTML5 VELOCE
+    // Usa Cobalt API (veloce) + Piped/Invidious in parallelo
     // ============================================================
     const app = (function() {
         const API_KEY = 'AIzaSyBIa5Se73P09TNGcSSvRNUiYgH6DJmU8T8';
@@ -1592,22 +1569,27 @@
         ];
 
         // ============================================================
-        // SERVIZI DI STREAMING AUDIO - MOLTI PER GARANTIRE LA VELOCITÀ
-        // Le richieste vengono fatte IN PARALLELO e vince la più veloce
+        // SERVIZI DI ESTRAZIONE AUDIO
+        // Cobalt è il più veloce - poi Piped/Invidious come fallback
         // ============================================================
         const AUDIO_STREAM_SERVICES = [
-            // Piped instances (più veloci)
+            // COBALT (il più veloce - risponde in 1-3 secondi)
+            {
+                name: 'cobalt',
+                type: 'cobalt',
+                url: 'https://api.cobalt.tools/api/json',
+                method: 'POST'
+            },
+            // PIPED (veloci)
             { name: 'piped-kavin', url: (id) => `https://pipedapi.kavin.rocks/streams/${id}`, type: 'piped' },
             { name: 'piped-admin', url: (id) => `https://pipedapi.adminforge.de/streams/${id}`, type: 'piped' },
-            { name: 'piped-leptons', url: (id) => `https://api.piped.leptons.xyz/streams/${id}`, type: 'piped' },
             { name: 'piped-r4fo', url: (id) => `https://pipedapi.r4fo.com/streams/${id}`, type: 'piped' },
-            { name: 'piped-reallyaw', url: (id) => `https://pipedapi.reallyaweso.me/streams/${id}`, type: 'piped' },
-            // Invidious instances (alternative)
+            { name: 'piped-leptons', url: (id) => `https://api.piped.leptons.xyz/streams/${id}`, type: 'piped' },
+            // INVIDIOUS (alternativa)
             { name: 'inv-nadeko', url: (id) => `https://inv.nadeko.net/api/v1/videos/${id}`, type: 'invidious' },
             { name: 'inv-nerdvpn', url: (id) => `https://invidious.nerdvpn.de/api/v1/videos/${id}`, type: 'invidious' },
             { name: 'inv-jingrock', url: (id) => `https://invidious.jing.rocks/api/v1/videos/${id}`, type: 'invidious' },
-            { name: 'inv-f5', url: (id) => `https://invidious.f5.si/api/v1/videos/${id}`, type: 'invidious' },
-            { name: 'inv-escobar', url: (id) => `https://invidious.private.coffee/api/v1/videos/${id}`, type: 'invidious' }
+            { name: 'inv-f5', url: (id) => `https://invidious.f5.si/api/v1/videos/${id}`, type: 'invidious' }
         ];
 
         const state = {
@@ -1632,9 +1614,10 @@
             duration: 0,
             progressInterval: null,
             durationCache: JSON.parse(localStorage.getItem('spotube_duration_cache') || '{}'),
-            audioUrlCache: JSON.parse(localStorage.getItem('spotube_audio_cache') || '{}'),
+            audioUrlCache: JSON.parse(localStorage.getItem('spotube_audio_cache_v2') || '{}'),
             currentAudioUrl: null,
-            usingFallback: false
+            usingFallback: false,
+            currentPlayId: 0  // Per evitare richieste duplicate
         };
 
         const searchInput     = document.getElementById('searchInput');
@@ -1741,9 +1724,6 @@
             if (e.target === modalOverlay) closeModal();
         });
 
-        // ============================================================
-        // SIDEBAR MOBILE (hamburger)
-        // ============================================================
         const openSidebar = () => {
             sidebar.classList.add('open');
             sidebarOverlay.classList.add('visible');
@@ -1759,7 +1739,6 @@
         });
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // Chiudi la sidebar quando si clicca una voce su mobile
         document.querySelectorAll('.sidebar-item[data-view]').forEach(item => {
             item.addEventListener('click', () => {
                 if (window.innerWidth <= 900) closeSidebar();
@@ -1789,69 +1768,118 @@
         });
 
         // ============================================================
-        // OTTENERE URL AUDIO - RICHIESTE PARALLELE PER VELOCITÀ
+        // FUNZIONE PER OTTENERE URL AUDIO
+        // Strategia: cache → Cobalt (rapido) → Piped/Invidious paralleli
         // ============================================================
         const getAudioStreamUrl = async (videoId) => {
-            // 1. Controlla cache
+            // 1. CACHE
             if (state.audioUrlCache[videoId]) {
                 const cached = state.audioUrlCache[videoId];
-                // Verifica che non sia scaduto (30 min)
-                if (cached.timestamp && (Date.now() - cached.timestamp) < 30 * 60 * 1000) {
-                    console.log('⚡ Audio dalla cache');
+                if (cached.timestamp && (Date.now() - cached.timestamp) < 60 * 60 * 1000) {
+                    console.log('⚡ Audio da cache');
                     return { url: cached.url, duration: cached.duration };
                 }
             }
 
-            // 2. Lancia TUTTE le richieste in parallelo e prendi la prima che risponde
-            console.log('🔍 Cerco audio da', AUDIO_STREAM_SERVICES.length, 'servizi in parallelo...');
+            console.log('🔍 Ricerca audio per', videoId);
 
-            const fetchFromService = async (service) => {
+            // Helper: timeout fetch
+            const fetchWithTimeout = (url, options = {}, ms = 4000) => {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), ms);
+                return fetch(url, { ...options, signal: controller.signal })
+                    .finally(() => clearTimeout(timeoutId));
+            };
+
+            // =========================================================
+            // PROVA 1: COBALT (velocissimo, formato API JSON)
+            // =========================================================
+            const tryCobalt = async () => {
                 try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 6000);
-                    const res = await fetch(service.url(videoId), { signal: controller.signal });
-                    clearTimeout(timeoutId);
-                    if (!res.ok) throw new Error('Bad response');
+                    const res = await fetchWithTimeout('https://api.cobalt.tools/api/json', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            url: `https://www.youtube.com/watch?v=${videoId}`,
+                            isAudioOnly: true,
+                            aFormat: 'mp3',
+                            audioFormat: 'mp3'
+                        })
+                    }, 5000);
+                    if (!res.ok) throw new Error('Cobalt HTTP ' + res.status);
                     const data = await res.json();
-
-                    // Piped
-                    if (data.audioStreams && data.audioStreams.length > 0) {
-                        const audio = data.audioStreams.find(s => s.mimeType && s.mimeType.startsWith('audio/')) || data.audioStreams[0];
-                        if (audio && audio.url) {
-                            return { url: audio.url, duration: data.duration || 0, service: service.name };
-                        }
+                    if (data.url || data.audio) {
+                        const audioUrl = data.url || data.audio;
+                        console.log('✅ Cobalt ha risposto!');
+                        return { url: audioUrl, duration: 0, service: 'cobalt' };
                     }
-
-                    // Invidious
-                    if (data.adaptiveFormats) {
-                        const audio = data.adaptiveFormats.find(f => f.type && f.type.startsWith('audio/'));
-                        if (audio && audio.url) {
-                            return { url: audio.url, duration: data.lengthSeconds || 0, service: service.name };
-                        }
-                    }
-
-                    throw new Error('No audio');
+                    throw new Error('Cobalt no URL');
                 } catch (e) {
                     throw e;
                 }
             };
 
-            // Lancia tutte in parallelo, prendi la prima che risponde
+            // =========================================================
+            // PROVA 2: PIPED e INVIDIOUS in parallelo
+            // =========================================================
+            const fetchFromPipedOrInvidious = async (service) => {
+                const res = await fetchWithTimeout(service.url(videoId), {}, 5000);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+
+                if (data.audioStreams && data.audioStreams.length > 0) {
+                    // Prendi il primo audio di qualità media (m4a è più veloce di webm)
+                    const audio = data.audioStreams.find(s => s.mimeType && s.mimeType.includes('audio/mp4'))
+                               || data.audioStreams.find(s => s.mimeType && s.mimeType.startsWith('audio/'))
+                               || data.audioStreams[0];
+                    if (audio && audio.url) {
+                        return { url: audio.url, duration: data.duration || 0, service: service.name };
+                    }
+                }
+
+                if (data.adaptiveFormats) {
+                    const audio = data.adaptiveFormats.find(f => f.type && f.type.includes('audio/mp4'))
+                               || data.adaptiveFormats.find(f => f.type && f.type.startsWith('audio/'));
+                    if (audio && audio.url) {
+                        return { url: audio.url, duration: data.lengthSeconds || 0, service: service.name };
+                    }
+                }
+                throw new Error('No audio');
+            };
+
+            // Lancia Cobalt + TUTTI i Piped/Invidious in parallelo
+            const promises = [];
+
+            // Cobalt in parallelo
+            promises.push(tryCobalt());
+
+            // Piped e Invidious in parallelo
+            AUDIO_STREAM_SERVICES.forEach(service => {
+                if (service.type === 'piped' || service.type === 'invidious') {
+                    promises.push(fetchFromPipedOrInvidious(service));
+                }
+            });
+
+            // Aspetta la prima risposta valida
             try {
-                const result = await Promise.any(AUDIO_STREAM_SERVICES.map(s => fetchFromService(s)));
-                console.log(`✅ Audio trovato via ${result.service} in parallelo`);
+                const result = await Promise.any(promises);
+                console.log(`✅ Audio trovato via ${result.service}`);
+
                 // Salva in cache
                 state.audioUrlCache[videoId] = {
                     url: result.url,
                     duration: result.duration,
                     timestamp: Date.now()
                 };
-                // Limita la cache a 100 elementi
                 const keys = Object.keys(state.audioUrlCache);
                 if (keys.length > 100) {
                     keys.slice(0, keys.length - 100).forEach(k => delete state.audioUrlCache[k]);
                 }
-                try { localStorage.setItem('spotube_audio_cache', JSON.stringify(state.audioUrlCache)); } catch (e) {}
+                try { localStorage.setItem('spotube_audio_cache_v2', JSON.stringify(state.audioUrlCache)); } catch (e) {}
+
                 return result;
             } catch (e) {
                 console.warn('❌ Nessun servizio ha risposto');
@@ -1940,7 +1968,7 @@
                 // Invalida la cache perché l'URL potrebbe essere scaduto
                 if (state.currentTrack.videoId) {
                     delete state.audioUrlCache[state.currentTrack.videoId];
-                    try { localStorage.setItem('spotube_audio_cache', JSON.stringify(state.audioUrlCache)); } catch (e) {}
+                    try { localStorage.setItem('spotube_audio_cache_v2', JSON.stringify(state.audioUrlCache)); } catch (e) {}
                 }
                 useYouTubeFallback(state.currentTrack);
             }
@@ -1973,6 +2001,10 @@
 
         const playTrack = async (track, queue = null, index = -1) => {
             if (!track) return;
+
+            // Evita doppie richieste per lo stesso brano
+            const playId = ++state.currentPlayId;
+
             if (queue && Array.isArray(queue)) {
                 state.currentQueue = queue;
                 state.currentQueueIndex = index >= 0 ? index : queue.findIndex(t => t.videoId === track.videoId);
@@ -1997,7 +2029,44 @@
             try { audioPlayer.pause(); } catch (e) {}
             updatePlayPauseUI();
 
+            // ============================================================
+            // SE C'È CACHE, RIPRODUCI SUBITO (istantaneo!)
+            // ============================================================
+            if (state.audioUrlCache[track.videoId]) {
+                const cached = state.audioUrlCache[track.videoId];
+                if (cached.timestamp && (Date.now() - cached.timestamp) < 60 * 60 * 1000) {
+                    console.log('⚡ Riproduzione istantanea da cache!');
+                    state.currentAudioUrl = cached.url;
+                    state.usingFallback = false;
+                    state.duration = cached.duration || state.durationCache[track.videoId] || 240;
+                    audioPlayer.src = cached.url;
+                    audioPlayer.volume = state.isMuted ? 0 : Math.max(0, Math.min(1, state.volume / 100));
+                    try {
+                        await audioPlayer.play();
+                        timeTotal.textContent = formatTime(state.duration);
+                        updateProgressUI();
+                        startProgressTracking();
+                        addToHistory(track);
+                        if (state.view === 'history') renderHistory();
+                        return;
+                    } catch (e) {
+                        console.warn('Cache fallita, ricerco...');
+                        delete state.audioUrlCache[track.videoId];
+                    }
+                }
+            }
+
+            // ============================================================
+            // RICERCA URL AUDIO
+            // ============================================================
             const streamData = await getAudioStreamUrl(track.videoId);
+
+            // Verifica che l'utente non abbia cambiato brano nel frattempo
+            if (playId !== state.currentPlayId) {
+                console.log('⚠️ Brano cambiato durante la ricerca, annullo');
+                return;
+            }
+
             if (streamData && streamData.url) {
                 state.currentAudioUrl = streamData.url;
                 state.usingFallback = false;
@@ -2006,7 +2075,7 @@
                 audioPlayer.volume = state.isMuted ? 0 : Math.max(0, Math.min(1, state.volume / 100));
                 try {
                     await audioPlayer.play();
-                    console.log('▶️ Audio partito con HTML5');
+                    console.log('▶️ Audio partito');
                 } catch (e) {
                     console.warn('Autoplay bloccato:', e);
                     useYouTubeFallback(track);
@@ -2014,7 +2083,7 @@
                 timeTotal.textContent = formatTime(state.duration);
                 updateProgressUI();
             } else {
-                console.log('⚠️ Nessun audio diretto, uso YouTube');
+                console.log('⚠️ Fallback YouTube');
                 useYouTubeFallback(track);
                 fetchVideoDuration(track.videoId).then(d => {
                     state.duration = d;
@@ -3024,7 +3093,7 @@ window.addEventListener('load', () => {
             renderPlaylistMiniList();
             applyVolume();
             renderHome();
-            console.log('🚀 Spotube avviato con servizi multipli');
+            console.log('🚀 Spotube avviato con Cobalt + Piped paralleli');
         };
 
         return { init, showHome, playTrack };
