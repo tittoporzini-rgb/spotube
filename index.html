@@ -107,6 +107,28 @@
             gap: 16px;
         }
 
+        /* Pulsante hamburger (visibile solo su mobile) */
+        .menu-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            color: var(--text-primary);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .menu-toggle:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+
         .logo {
             display: flex;
             align-items: center;
@@ -225,7 +247,7 @@
 
         .user-badge i { font-size: 1.5rem; color: var(--accent); }
 
-        .main-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+        .main-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; position: relative; }
 
         /* ============ SIDEBAR ============ */
         .sidebar {
@@ -238,6 +260,8 @@
             overflow-y: auto;
             flex-shrink: 0;
             border-right: 1px solid var(--border);
+            transition: transform 0.3s ease;
+            z-index: 95;
         }
 
         .sidebar-section { display: flex; flex-direction: column; gap: 4px; }
@@ -356,6 +380,23 @@
         .playlist-mini-item .mini-count {
             font-size: 0.7rem;
             color: var(--text-muted);
+        }
+
+        /* Overlay per chiudere la sidebar su mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 94;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.visible {
+            opacity: 1;
         }
 
         /* ============ CONTENUTO ============ */
@@ -1242,10 +1283,9 @@
         }
 
         /* ============================================================
-           RESPONSIVE — OTTIMIZZATO PER SMARTPHONE
+           RESPONSIVE
            ============================================================ */
 
-        /* Tablet */
         @media (max-width: 1024px) {
             .content-header-icon { width: 100px; height: 100px; font-size: 2.5rem; }
             .content-header-title { font-size: 1.8rem; }
@@ -1255,9 +1295,34 @@
             .player-right { width: 220px; }
         }
 
-        /* Smartphone grande / Tablet piccolo */
+        /* Smartphone / Tablet - SIDEBAR A SCOMPARSA CON HAMBURGER */
         @media (max-width: 900px) {
-            .sidebar { display: none; }
+            /* Mostra il pulsante hamburger */
+            .menu-toggle { display: flex; }
+
+            /* Sidebar diventa un drawer che si apre da sinistra */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 260px;
+                transform: translateX(-100%);
+                background: var(--bg-sidebar);
+                box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
+                padding-top: 20px;
+                overflow-y: auto;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            /* Overlay visibile quando la sidebar è aperta */
+            .sidebar-overlay.visible {
+                display: block;
+            }
+
             .top-bar { padding: 12px 16px; gap: 8px; }
             .logo { font-size: 1.2rem; }
             .logo i { font-size: 1.6rem; }
@@ -1272,11 +1337,11 @@
             .track-row { grid-template-columns: 30px 1fr 80px; }
         }
 
-        /* Smartphone */
         @media (max-width: 700px) {
             .top-bar { padding: 10px 12px; }
             .logo span { display: none; }
             .theme-toggle, .pip-toggle { width: 36px; height: 36px; font-size: 0.9rem; }
+            .menu-toggle { width: 36px; height: 36px; font-size: 1rem; }
             .content { padding: 16px; padding-bottom: 20px; }
             .results-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .card { padding: 10px; }
@@ -1285,63 +1350,33 @@
             .card-actions { top: 14px; right: 14px; opacity: 1; }
             .card-action-btn { width: 28px; height: 28px; font-size: 0.7rem; }
 
-            /* PLAYER MOBILE — Adattato per smartphone */
-            .player-bar {
-                height: auto;
-                min-height: 76px;
-            }
-            .player-body {
-                padding: 8px 10px;
-                gap: 8px;
-            }
-
-            /* Info brano: cover + titolo */
-            .player-track-info {
-                width: auto;
-                flex: 1;
-                min-width: 0;
-                gap: 8px;
-            }
-            .player-cover-wrapper {
-                width: 44px;
-                height: 44px;
-                border-radius: 6px;
-            }
+            .player-bar { height: auto; min-height: 76px; }
+            .player-body { padding: 8px 10px; gap: 8px; }
+            .player-track-info { width: auto; flex: 1; min-width: 0; gap: 8px; }
+            .player-cover-wrapper { width: 44px; height: 44px; border-radius: 6px; }
             .player-track-title { font-size: 0.78rem; }
             .player-track-channel { font-size: 0.68rem; }
             .player-fav-btn { width: 28px; height: 28px; font-size: 0.9rem; }
-
-            /* Controlli: compattati */
             .player-controls { gap: 2px; }
             .player-controls-row { gap: 8px; }
             .player-btn { width: 32px; height: 32px; font-size: 0.85rem; }
             .player-btn-play { width: 38px; height: 38px; font-size: 0.95rem; }
-
-            /* Nascondi il tempo nel player per risparmiare spazio */
             .player-time { display: none; }
-
-            /* Nascondi i controlli a destra (volume + pip) */
             .player-right { display: none; }
-
-            /* Progress bar sottile */
             .player-progress { height: 4px; }
             .player-progress:hover { height: 5px; }
-
-            /* Toast */
             .toast-container { bottom: 100px; right: 12px; left: 12px; }
             .toast { font-size: 0.8rem; padding: 12px 16px; max-width: 100%; }
-
-            /* Modale */
             .modal { padding: 22px; }
             .modal h3 { font-size: 1.1rem; }
         }
 
-        /* Smartphone piccolo */
         @media (max-width: 480px) {
             .top-bar { padding: 8px 10px; gap: 6px; }
             .search-container input { padding: 10px 14px 10px 38px; font-size: 0.85rem; }
             .search-container > i { left: 12px; }
             .theme-toggle, .pip-toggle { width: 34px; height: 34px; font-size: 0.85rem; }
+            .menu-toggle { width: 34px; height: 34px; font-size: 0.95rem; }
             .content { padding: 12px; }
             .results-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
             .card { padding: 8px; border-radius: 10px; }
@@ -1351,20 +1386,16 @@
             .card-play-overlay { width: 34px; height: 34px; font-size: 0.85rem; }
             .card-actions { top: 10px; right: 10px; gap: 4px; }
             .card-action-btn { width: 26px; height: 26px; font-size: 0.65rem; }
-
             .section-header h2 { font-size: 1.1rem; }
             .section-header .badge { font-size: 0.65rem; padding: 4px 10px; }
-
             .content-header-icon { width: 64px; height: 64px; font-size: 1.6rem; border-radius: 8px; }
             .content-header-title { font-size: 1.2rem; }
             .content-header-type { font-size: 0.68rem; }
-
             .btn-play-big { width: 46px; height: 46px; font-size: 1.1rem; }
             .btn-icon-outline { width: 38px; height: 38px; font-size: 0.9rem; }
             .btn-clear { padding: 8px 12px; font-size: 0.72rem; }
             .header-actions { gap: 8px; }
 
-            /* PLAYER MOBILE PICCOLO */
             .player-bar { min-height: 68px; }
             .player-body { padding: 6px 8px; gap: 6px; }
             .player-cover-wrapper { width: 40px; height: 40px; }
@@ -1377,7 +1408,6 @@
             .player-progress { height: 3px; }
         }
 
-        /* Landscape smartphone — ancora più compatto */
         @media (max-height: 500px) and (orientation: landscape) {
             .player-bar { min-height: 60px; }
             .player-body { padding: 5px 10px; }
@@ -1388,7 +1418,6 @@
             .player-btn-play { width: 34px; height: 34px; }
         }
 
-        /* Sicurezza per iPhone con notch */
         @supports (padding: env(safe-area-inset-bottom)) {
             .player-bar {
                 padding-bottom: env(safe-area-inset-bottom);
@@ -1404,6 +1433,9 @@
     </div>
 
     <header class="top-bar">
+        <button class="menu-toggle" id="menuToggle" title="Apri menu">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="logo" onclick="app.showHome()">
             <i class="fas fa-play-circle"></i>
             <span>Spotube</span>
@@ -1427,7 +1459,8 @@
     </header>
 
     <div class="main-layout">
-        <aside class="sidebar">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
                 <div class="sidebar-title">Scopri</div>
                 <div class="sidebar-item active" data-view="home"><i class="fas fa-home"></i> Home</div>
@@ -1543,7 +1576,7 @@
 
     <script>
     // ============================================================
-    // SPOTUBE - Player audio HTML5 + fallback YouTube
+    // SPOTUBE - Player audio HTML5 + servizi multipli + hamburger
     // ============================================================
     const app = (function() {
         const API_KEY = 'AIzaSyBIa5Se73P09TNGcSSvRNUiYgH6DJmU8T8';
@@ -1558,10 +1591,23 @@
             ['#ff7043', '#bf360c'], ['#ec407a', '#880e4f']
         ];
 
+        // ============================================================
+        // SERVIZI DI STREAMING AUDIO - MOLTI PER GARANTIRE LA VELOCITÀ
+        // Le richieste vengono fatte IN PARALLELO e vince la più veloce
+        // ============================================================
         const AUDIO_STREAM_SERVICES = [
-            { name: 'piped', url: (id) => `https://pipedapi.kavin.rocks/streams/${id}` },
-            { name: 'invidious1', url: (id) => `https://inv.nadeko.net/api/v1/videos/${id}` },
-            { name: 'invidious2', url: (id) => `https://invidious.nerdvpn.de/api/v1/videos/${id}` }
+            // Piped instances (più veloci)
+            { name: 'piped-kavin', url: (id) => `https://pipedapi.kavin.rocks/streams/${id}`, type: 'piped' },
+            { name: 'piped-admin', url: (id) => `https://pipedapi.adminforge.de/streams/${id}`, type: 'piped' },
+            { name: 'piped-leptons', url: (id) => `https://api.piped.leptons.xyz/streams/${id}`, type: 'piped' },
+            { name: 'piped-r4fo', url: (id) => `https://pipedapi.r4fo.com/streams/${id}`, type: 'piped' },
+            { name: 'piped-reallyaw', url: (id) => `https://pipedapi.reallyaweso.me/streams/${id}`, type: 'piped' },
+            // Invidious instances (alternative)
+            { name: 'inv-nadeko', url: (id) => `https://inv.nadeko.net/api/v1/videos/${id}`, type: 'invidious' },
+            { name: 'inv-nerdvpn', url: (id) => `https://invidious.nerdvpn.de/api/v1/videos/${id}`, type: 'invidious' },
+            { name: 'inv-jingrock', url: (id) => `https://invidious.jing.rocks/api/v1/videos/${id}`, type: 'invidious' },
+            { name: 'inv-f5', url: (id) => `https://invidious.f5.si/api/v1/videos/${id}`, type: 'invidious' },
+            { name: 'inv-escobar', url: (id) => `https://invidious.private.coffee/api/v1/videos/${id}`, type: 'invidious' }
         ];
 
         const state = {
@@ -1586,6 +1632,7 @@
             duration: 0,
             progressInterval: null,
             durationCache: JSON.parse(localStorage.getItem('spotube_duration_cache') || '{}'),
+            audioUrlCache: JSON.parse(localStorage.getItem('spotube_audio_cache') || '{}'),
             currentAudioUrl: null,
             usingFallback: false
         };
@@ -1600,6 +1647,9 @@
         const themeToggle     = document.getElementById('themeToggle');
         const themeIcon       = document.getElementById('themeIcon');
         const popupToggle     = document.getElementById('popupToggle');
+        const menuToggle      = document.getElementById('menuToggle');
+        const sidebar         = document.getElementById('sidebar');
+        const sidebarOverlay  = document.getElementById('sidebarOverlay');
         const modalOverlay    = document.getElementById('modalOverlay');
         const modalTitle      = document.getElementById('modalTitle');
         const modalMessage    = document.getElementById('modalMessage');
@@ -1691,6 +1741,31 @@
             if (e.target === modalOverlay) closeModal();
         });
 
+        // ============================================================
+        // SIDEBAR MOBILE (hamburger)
+        // ============================================================
+        const openSidebar = () => {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('visible');
+        };
+        const closeSidebar = () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('visible');
+        };
+
+        menuToggle.addEventListener('click', () => {
+            if (sidebar.classList.contains('open')) closeSidebar();
+            else openSidebar();
+        });
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Chiudi la sidebar quando si clicca una voce su mobile
+        document.querySelectorAll('.sidebar-item[data-view]').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 900) closeSidebar();
+            });
+        });
+
         const applyTheme = (theme) => {
             state.theme = theme;
             if (theme === 'light') {
@@ -1713,30 +1788,75 @@
             showToast(newTheme === 'light' ? 'Tema chiaro' : 'Tema scuro', newTheme === 'light' ? 'fa-sun' : 'fa-moon', 'info');
         });
 
+        // ============================================================
+        // OTTENERE URL AUDIO - RICHIESTE PARALLELE PER VELOCITÀ
+        // ============================================================
         const getAudioStreamUrl = async (videoId) => {
-            for (const service of AUDIO_STREAM_SERVICES) {
+            // 1. Controlla cache
+            if (state.audioUrlCache[videoId]) {
+                const cached = state.audioUrlCache[videoId];
+                // Verifica che non sia scaduto (30 min)
+                if (cached.timestamp && (Date.now() - cached.timestamp) < 30 * 60 * 1000) {
+                    console.log('⚡ Audio dalla cache');
+                    return { url: cached.url, duration: cached.duration };
+                }
+            }
+
+            // 2. Lancia TUTTE le richieste in parallelo e prendi la prima che risponde
+            console.log('🔍 Cerco audio da', AUDIO_STREAM_SERVICES.length, 'servizi in parallelo...');
+
+            const fetchFromService = async (service) => {
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    const timeoutId = setTimeout(() => controller.abort(), 6000);
                     const res = await fetch(service.url(videoId), { signal: controller.signal });
                     clearTimeout(timeoutId);
-                    if (!res.ok) continue;
+                    if (!res.ok) throw new Error('Bad response');
                     const data = await res.json();
+
+                    // Piped
                     if (data.audioStreams && data.audioStreams.length > 0) {
                         const audio = data.audioStreams.find(s => s.mimeType && s.mimeType.startsWith('audio/')) || data.audioStreams[0];
                         if (audio && audio.url) {
-                            return { url: audio.url, duration: data.duration || 0 };
+                            return { url: audio.url, duration: data.duration || 0, service: service.name };
                         }
                     }
+
+                    // Invidious
                     if (data.adaptiveFormats) {
                         const audio = data.adaptiveFormats.find(f => f.type && f.type.startsWith('audio/'));
                         if (audio && audio.url) {
-                            return { url: audio.url, duration: data.lengthSeconds || 0 };
+                            return { url: audio.url, duration: data.lengthSeconds || 0, service: service.name };
                         }
                     }
-                } catch (e) {}
+
+                    throw new Error('No audio');
+                } catch (e) {
+                    throw e;
+                }
+            };
+
+            // Lancia tutte in parallelo, prendi la prima che risponde
+            try {
+                const result = await Promise.any(AUDIO_STREAM_SERVICES.map(s => fetchFromService(s)));
+                console.log(`✅ Audio trovato via ${result.service} in parallelo`);
+                // Salva in cache
+                state.audioUrlCache[videoId] = {
+                    url: result.url,
+                    duration: result.duration,
+                    timestamp: Date.now()
+                };
+                // Limita la cache a 100 elementi
+                const keys = Object.keys(state.audioUrlCache);
+                if (keys.length > 100) {
+                    keys.slice(0, keys.length - 100).forEach(k => delete state.audioUrlCache[k]);
+                }
+                try { localStorage.setItem('spotube_audio_cache', JSON.stringify(state.audioUrlCache)); } catch (e) {}
+                return result;
+            } catch (e) {
+                console.warn('❌ Nessun servizio ha risposto');
+                return null;
             }
-            return null;
         };
 
         const updatePlayPauseUI = () => {
@@ -1817,6 +1937,11 @@
         });
         audioPlayer.addEventListener('error', () => {
             if (state.currentTrack && !state.usingFallback) {
+                // Invalida la cache perché l'URL potrebbe essere scaduto
+                if (state.currentTrack.videoId) {
+                    delete state.audioUrlCache[state.currentTrack.videoId];
+                    try { localStorage.setItem('spotube_audio_cache', JSON.stringify(state.audioUrlCache)); } catch (e) {}
+                }
                 useYouTubeFallback(state.currentTrack);
             }
         });
@@ -1881,12 +2006,15 @@
                 audioPlayer.volume = state.isMuted ? 0 : Math.max(0, Math.min(1, state.volume / 100));
                 try {
                     await audioPlayer.play();
+                    console.log('▶️ Audio partito con HTML5');
                 } catch (e) {
+                    console.warn('Autoplay bloccato:', e);
                     useYouTubeFallback(track);
                 }
                 timeTotal.textContent = formatTime(state.duration);
                 updateProgressUI();
             } else {
+                console.log('⚠️ Nessun audio diretto, uso YouTube');
                 useYouTubeFallback(track);
                 fetchVideoDuration(track.videoId).then(d => {
                     state.duration = d;
@@ -2457,7 +2585,10 @@ window.addEventListener('load', () => {
                     <span class="mini-count">${pl.tracks.length}</span>
                 </div>`).join('');
             playlistMiniList.querySelectorAll('.playlist-mini-item').forEach(el => {
-                el.addEventListener('click', () => renderPlaylistDetail(el.dataset.plid));
+                el.addEventListener('click', () => {
+                    renderPlaylistDetail(el.dataset.plid);
+                    if (window.innerWidth <= 900) closeSidebar();
+                });
             });
         };
 
@@ -2857,6 +2988,7 @@ window.addEventListener('load', () => {
         document.getElementById('newPlaylistBtnSidebar').addEventListener('click', (e) => {
             e.stopPropagation();
             openCreatePlaylistModal((newPl) => renderPlaylistDetail(newPl.id));
+            if (window.innerWidth <= 900) closeSidebar();
         });
 
         let searchDebounce = null;
@@ -2872,12 +3004,16 @@ window.addEventListener('load', () => {
                 clearTimeout(searchDebounce);
                 const q = searchInput.value.trim();
                 if (q.length > 0) performSearch(q);
+                searchInput.blur();
             }
         });
 
         document.addEventListener('keydown', (e) => {
             if (e.target.matches('input, textarea, select')) return;
             if (e.code === 'Space') { e.preventDefault(); togglePlayPause(); }
+            if (e.code === 'Escape') {
+                if (sidebar.classList.contains('open')) closeSidebar();
+            }
         });
 
         const init = () => {
@@ -2888,7 +3024,7 @@ window.addEventListener('load', () => {
             renderPlaylistMiniList();
             applyVolume();
             renderHome();
-            console.log('🚀 Spotube avviato');
+            console.log('🚀 Spotube avviato con servizi multipli');
         };
 
         return { init, showHome, playTrack };
