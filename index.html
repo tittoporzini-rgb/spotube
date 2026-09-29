@@ -2,7 +2,10 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Spotube · Musica e Video da YouTube</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +17,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -38,6 +42,7 @@
             --border-strong: rgba(255, 255, 255, 0.12);
             --shadow: rgba(0, 0, 0, 0.5);
             --gradient-content: linear-gradient(180deg, #0a0a0f 0%, #0d0d14 100%);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         body.light-theme {
@@ -64,22 +69,30 @@
             --gradient-content: linear-gradient(180deg, #f5f5f7 0%, #ebebf0 100%);
         }
 
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             background: var(--bg-primary);
             color: var(--text-primary);
             height: 100vh;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             font-size: 14px;
             transition: background 0.3s, color 0.3s;
+            overscroll-behavior: none;
         }
 
-        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
+        /* ============ TOP BAR ============ */
         .top-bar {
             display: flex;
             align-items: center;
@@ -87,6 +100,7 @@
             padding: 16px 28px;
             background: var(--bg-primary);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
             z-index: 100;
@@ -141,6 +155,8 @@
             font-size: 0.95rem;
             outline: none;
             transition: all 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .search-container input::placeholder { color: var(--text-muted); }
@@ -170,6 +186,7 @@
             justify-content: center;
             font-size: 1rem;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
         .theme-toggle:hover {
@@ -198,6 +215,7 @@
             cursor: pointer;
             transition: all 0.15s;
             border: 1px solid transparent;
+            flex-shrink: 0;
         }
 
         .user-badge:hover {
@@ -207,8 +225,9 @@
 
         .user-badge i { font-size: 1.5rem; color: var(--accent); }
 
-        .main-layout { display: flex; flex: 1; overflow: hidden; }
+        .main-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 
+        /* ============ SIDEBAR ============ */
         .sidebar {
             width: 250px;
             background: var(--bg-sidebar);
@@ -339,11 +358,13 @@
             color: var(--text-muted);
         }
 
+        /* ============ CONTENUTO ============ */
         .content {
             flex: 1;
             overflow-y: auto;
             padding: 28px 32px 40px 32px;
             background: var(--gradient-content);
+            -webkit-overflow-scrolling: touch;
         }
 
         .content-header {
@@ -427,6 +448,7 @@
             justify-content: center;
             transition: all 0.15s;
             box-shadow: 0 8px 20px -4px rgba(30, 215, 96, 0.5);
+            flex-shrink: 0;
         }
 
         .btn-play-big:hover { transform: scale(1.05); background: var(--accent-hover); }
@@ -444,6 +466,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .btn-icon-outline:hover { color: var(--text-primary); border-color: var(--text-primary); }
@@ -621,6 +644,7 @@
         .card-action-btn.add-btn:hover { color: var(--accent); }
         .card-action-btn.pip-btn:hover { color: var(--accent-blue); }
 
+        /* ============ LISTA BRANI ============ */
         .tracks-list { display: flex; flex-direction: column; gap: 2px; }
 
         .track-row {
@@ -692,6 +716,7 @@
         .track-action-btn.active { color: var(--accent); }
         .track-action-btn.delete-btn:hover { color: var(--accent-red); background: rgba(255, 71, 87, 0.1); }
 
+        /* ============ STATI ============ */
         .status-message {
             display: flex;
             flex-direction: column;
@@ -714,6 +739,7 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ============ PLAYER ============ */
         .player-bar {
             background: var(--bg-player);
             border-top: 1px solid var(--border);
@@ -723,6 +749,7 @@
             flex-shrink: 0;
             height: 110px;
             z-index: 50;
+            padding-bottom: var(--safe-bottom);
         }
 
         .player-progress {
@@ -732,6 +759,7 @@
             cursor: pointer;
             position: relative;
             transition: height 0.15s;
+            flex-shrink: 0;
         }
 
         .player-progress:hover { height: 9px; }
@@ -771,6 +799,7 @@
             align-items: center;
             padding: 12px 20px;
             gap: 16px;
+            min-height: 0;
         }
 
         .player-track-info {
@@ -1045,6 +1074,7 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             z-index: 10000;
             display: none;
             align-items: center;
@@ -1084,6 +1114,8 @@
             outline: none;
             margin-bottom: 20px;
             font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .modal input:focus, .modal select:focus {
@@ -1209,6 +1241,11 @@
             font-family: monospace;
         }
 
+        /* ============================================================
+           RESPONSIVE — OTTIMIZZATO PER SMARTPHONE
+           ============================================================ */
+
+        /* Tablet */
         @media (max-width: 1024px) {
             .content-header-icon { width: 100px; height: 100px; font-size: 2.5rem; }
             .content-header-title { font-size: 1.8rem; }
@@ -1218,40 +1255,144 @@
             .player-right { width: 220px; }
         }
 
+        /* Smartphone grande / Tablet piccolo */
         @media (max-width: 900px) {
             .sidebar { display: none; }
-            .top-bar { padding: 12px 16px; }
-            .search-container { margin: 0 8px; }
-            .player-body { padding: 10px 14px; gap: 10px; }
-            .player-track-info { width: 180px; }
-            .player-cover-wrapper { width: 50px; height: 50px; }
-            .player-right { width: auto; }
-            .player-volume-slider { width: 60px; }
+            .top-bar { padding: 12px 16px; gap: 8px; }
+            .logo { font-size: 1.2rem; }
+            .logo i { font-size: 1.6rem; }
+            .search-container { margin: 0 4px; }
+            .search-container input { padding: 11px 16px 11px 42px; font-size: 0.9rem; }
+            .search-container > i { left: 14px; font-size: 0.9rem; }
+            .user-badge { display: none; }
             .content { padding: 20px; }
-            .content-header { flex-direction: column; align-items: flex-start; }
-            .content-header-icon { width: 80px; height: 80px; font-size: 2rem; }
+            .content-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .content-header-icon { width: 80px; height: 80px; font-size: 2rem; border-radius: 10px; }
             .content-header-title { font-size: 1.5rem; }
+            .track-row { grid-template-columns: 30px 1fr 80px; }
         }
 
-        @media (max-width: 600px) {
+        /* Smartphone */
+        @media (max-width: 700px) {
+            .top-bar { padding: 10px 12px; }
             .logo span { display: none; }
-            .user-badge span { display: none; }
-            .user-badge { padding: 6px 10px; }
+            .theme-toggle, .pip-toggle { width: 36px; height: 36px; font-size: 0.9rem; }
+            .content { padding: 16px; padding-bottom: 20px; }
             .results-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .card { padding: 10px; }
             .card-title { font-size: 0.8rem; }
             .card-channel { font-size: 0.72rem; }
-            .player-track-info { width: auto; min-width: 0; flex: 1; }
-            .player-track-text { display: none; }
+            .card-actions { top: 14px; right: 14px; opacity: 1; }
+            .card-action-btn { width: 28px; height: 28px; font-size: 0.7rem; }
+
+            /* PLAYER MOBILE — Adattato per smartphone */
+            .player-bar {
+                height: auto;
+                min-height: 76px;
+            }
+            .player-body {
+                padding: 8px 10px;
+                gap: 8px;
+            }
+
+            /* Info brano: cover + titolo */
+            .player-track-info {
+                width: auto;
+                flex: 1;
+                min-width: 0;
+                gap: 8px;
+            }
+            .player-cover-wrapper {
+                width: 44px;
+                height: 44px;
+                border-radius: 6px;
+            }
+            .player-track-title { font-size: 0.78rem; }
+            .player-track-channel { font-size: 0.68rem; }
+            .player-fav-btn { width: 28px; height: 28px; font-size: 0.9rem; }
+
+            /* Controlli: compattati */
+            .player-controls { gap: 2px; }
+            .player-controls-row { gap: 8px; }
+            .player-btn { width: 32px; height: 32px; font-size: 0.85rem; }
+            .player-btn-play { width: 38px; height: 38px; font-size: 0.95rem; }
+
+            /* Nascondi il tempo nel player per risparmiare spazio */
+            .player-time { display: none; }
+
+            /* Nascondi i controlli a destra (volume + pip) */
             .player-right { display: none; }
-            .player-controls-row { gap: 10px; }
-            .player-time { max-width: 100%; }
-            .btn-clear { padding: 8px 12px; font-size: 0.75rem; }
-            .theme-toggle, .pip-toggle { width: 36px; height: 36px; }
-            .player-bar { height: 100px; }
+
+            /* Progress bar sottile */
+            .player-progress { height: 4px; }
+            .player-progress:hover { height: 5px; }
+
+            /* Toast */
+            .toast-container { bottom: 100px; right: 12px; left: 12px; }
+            .toast { font-size: 0.8rem; padding: 12px 16px; max-width: 100%; }
+
+            /* Modale */
+            .modal { padding: 22px; }
+            .modal h3 { font-size: 1.1rem; }
         }
 
+        /* Smartphone piccolo */
         @media (max-width: 480px) {
-            .player-track-info { display: none; }
+            .top-bar { padding: 8px 10px; gap: 6px; }
+            .search-container input { padding: 10px 14px 10px 38px; font-size: 0.85rem; }
+            .search-container > i { left: 12px; }
+            .theme-toggle, .pip-toggle { width: 34px; height: 34px; font-size: 0.85rem; }
+            .content { padding: 12px; }
+            .results-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+            .card { padding: 8px; border-radius: 10px; }
+            .card-img-wrapper { margin-bottom: 8px; border-radius: 6px; }
+            .card-title { font-size: 0.75rem; margin-bottom: 2px; }
+            .card-channel { font-size: 0.68rem; }
+            .card-play-overlay { width: 34px; height: 34px; font-size: 0.85rem; }
+            .card-actions { top: 10px; right: 10px; gap: 4px; }
+            .card-action-btn { width: 26px; height: 26px; font-size: 0.65rem; }
+
+            .section-header h2 { font-size: 1.1rem; }
+            .section-header .badge { font-size: 0.65rem; padding: 4px 10px; }
+
+            .content-header-icon { width: 64px; height: 64px; font-size: 1.6rem; border-radius: 8px; }
+            .content-header-title { font-size: 1.2rem; }
+            .content-header-type { font-size: 0.68rem; }
+
+            .btn-play-big { width: 46px; height: 46px; font-size: 1.1rem; }
+            .btn-icon-outline { width: 38px; height: 38px; font-size: 0.9rem; }
+            .btn-clear { padding: 8px 12px; font-size: 0.72rem; }
+            .header-actions { gap: 8px; }
+
+            /* PLAYER MOBILE PICCOLO */
+            .player-bar { min-height: 68px; }
+            .player-body { padding: 6px 8px; gap: 6px; }
+            .player-cover-wrapper { width: 40px; height: 40px; }
+            .player-track-title { font-size: 0.72rem; }
+            .player-track-channel { font-size: 0.62rem; }
+            .player-fav-btn { display: none; }
+            .player-controls-row { gap: 6px; }
+            .player-btn { width: 30px; height: 30px; font-size: 0.8rem; }
+            .player-btn-play { width: 36px; height: 36px; font-size: 0.9rem; }
+            .player-progress { height: 3px; }
+        }
+
+        /* Landscape smartphone — ancora più compatto */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .player-bar { min-height: 60px; }
+            .player-body { padding: 5px 10px; }
+            .player-cover-wrapper { width: 36px; height: 36px; }
+            .player-track-title { font-size: 0.7rem; }
+            .player-track-channel { display: none; }
+            .player-btn { width: 28px; height: 28px; }
+            .player-btn-play { width: 34px; height: 34px; }
+        }
+
+        /* Sicurezza per iPhone con notch */
+        @supports (padding: env(safe-area-inset-bottom)) {
+            .player-bar {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
         }
     </style>
 </head>
@@ -1269,7 +1410,7 @@
         </div>
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Cerca brani, artisti, video..." autocomplete="off">
+            <input type="text" id="searchInput" placeholder="Cerca brani..." autocomplete="off">
         </div>
         <div class="top-actions">
             <button class="pip-toggle" id="popupToggle" title="Apri player in finestra separata">
@@ -1382,9 +1523,7 @@
             </div>
         </div>
 
-        <!-- Elemento audio HTML5 nascosto (per streaming veloce) -->
         <audio id="audioPlayer" preload="auto"></audio>
-        <!-- Container per iframe YouTube (fallback) -->
         <div id="ytFallback" style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0.01;bottom:-200px;"></div>
     </footer>
 
@@ -1419,8 +1558,6 @@
             ['#ff7043', '#bf360c'], ['#ec407a', '#880e4f']
         ];
 
-        // Servizi pubblici di streaming audio da YouTube (usati a rotazione)
-        // Questi servizi estraggono l'audio e lo servono via HTTP diretto
         const AUDIO_STREAM_SERVICES = [
             { name: 'piped', url: (id) => `https://pipedapi.kavin.rocks/streams/${id}` },
             { name: 'invidious1', url: (id) => `https://inv.nadeko.net/api/v1/videos/${id}` },
@@ -1449,8 +1586,8 @@
             duration: 0,
             progressInterval: null,
             durationCache: JSON.parse(localStorage.getItem('spotube_duration_cache') || '{}'),
-            currentAudioUrl: null,       // URL audio corrente
-            usingFallback: false          // se stiamo usando l'iframe YouTube
+            currentAudioUrl: null,
+            usingFallback: false
         };
 
         const searchInput     = document.getElementById('searchInput');
@@ -1559,9 +1696,11 @@
             if (theme === 'light') {
                 document.body.classList.add('light-theme');
                 themeIcon.className = 'fas fa-sun';
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f5f5f7');
             } else {
                 document.body.classList.remove('light-theme');
                 themeIcon.className = 'fas fa-moon';
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0a0a0f');
             }
             localStorage.setItem('spotube_theme', theme);
             if (popupPlayer && !popupPlayer.closed) {
@@ -1574,11 +1713,7 @@
             showToast(newTheme === 'light' ? 'Tema chiaro' : 'Tema scuro', newTheme === 'light' ? 'fa-sun' : 'fa-moon', 'info');
         });
 
-        // ============================================================
-        // RECUPERO URL AUDIO da servizi pubblici (Piped/Invidious)
-        // ============================================================
         const getAudioStreamUrl = async (videoId) => {
-            // Prova ogni servizio a rotazione
             for (const service of AUDIO_STREAM_SERVICES) {
                 try {
                     const controller = new AbortController();
@@ -1587,41 +1722,23 @@
                     clearTimeout(timeoutId);
                     if (!res.ok) continue;
                     const data = await res.json();
-
-                    // Piped: cerca in audioStreams
                     if (data.audioStreams && data.audioStreams.length > 0) {
-                        // Prendi il primo con mimeType audio
                         const audio = data.audioStreams.find(s => s.mimeType && s.mimeType.startsWith('audio/')) || data.audioStreams[0];
                         if (audio && audio.url) {
-                            console.log(`✅ Audio trovato via ${service.name}`);
-                            return {
-                                url: audio.url,
-                                duration: data.duration || 0
-                            };
+                            return { url: audio.url, duration: data.duration || 0 };
                         }
                     }
-
-                    // Invidious: cerca in adaptiveFormats
                     if (data.adaptiveFormats) {
                         const audio = data.adaptiveFormats.find(f => f.type && f.type.startsWith('audio/'));
                         if (audio && audio.url) {
-                            console.log(`✅ Audio trovato via ${service.name}`);
-                            return {
-                                url: audio.url,
-                                duration: data.lengthSeconds || 0
-                            };
+                            return { url: audio.url, duration: data.lengthSeconds || 0 };
                         }
                     }
-                } catch (e) {
-                    console.warn(`Servizio ${service.name} fallito:`, e.message);
-                }
+                } catch (e) {}
             }
             return null;
         };
 
-        // ============================================================
-        // PLAYER AUDIO HTML5
-        // ============================================================
         const updatePlayPauseUI = () => {
             if (state.isPlaying) {
                 playPauseIcon.className = 'fas fa-pause';
@@ -1656,14 +1773,12 @@
             state.progressInterval = setInterval(() => {
                 if (!state.currentTrack) return;
                 if (!state.usingFallback) {
-                    // Traccia dal player audio HTML5
                     state.currentTime = audioPlayer.currentTime || 0;
                     if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
                         state.duration = audioPlayer.duration;
                     }
                     updateProgressUI();
                 } else {
-                    // Fallback: simula il progresso
                     if (state.isPlaying && state.currentTime < state.duration) {
                         state.currentTime += 0.5;
                         updateProgressUI();
@@ -1675,7 +1790,6 @@
             }, 500);
         };
 
-        // Eventi del player audio HTML5
         audioPlayer.addEventListener('play', () => {
             state.isPlaying = true;
             updatePlayPauseUI();
@@ -1701,18 +1815,12 @@
                 updateProgressUI();
             }
         });
-        audioPlayer.addEventListener('error', (e) => {
-            console.warn('Errore audio:', e);
-            // Se l'audio fallisce, prova il fallback YouTube
+        audioPlayer.addEventListener('error', () => {
             if (state.currentTrack && !state.usingFallback) {
-                console.log('Tento fallback YouTube...');
                 useYouTubeFallback(state.currentTrack);
             }
         });
 
-        // ============================================================
-        // FALLBACK: iframe YouTube se l'audio streaming fallisce
-        // ============================================================
         const useYouTubeFallback = (track) => {
             state.usingFallback = true;
             const origin = window.location.origin && window.location.origin !== 'null'
@@ -1721,7 +1829,6 @@
                 + `?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0`
                 + `&enablejsapi=1`
                 + `&origin=${encodeURIComponent(origin)}`;
-
             ytFallback.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
             state.isPlaying = true;
             updatePlayPauseUI();
@@ -1739,12 +1846,8 @@
             } catch (e) {}
         };
 
-        // ============================================================
-        // PLAYTRACK - VELOCE con audio HTML5
-        // ============================================================
         const playTrack = async (track, queue = null, index = -1) => {
             if (!track) return;
-
             if (queue && Array.isArray(queue)) {
                 state.currentQueue = queue;
                 state.currentQueueIndex = index >= 0 ? index : queue.findIndex(t => t.videoId === track.videoId);
@@ -1752,7 +1855,6 @@
                 state.currentQueue = [track];
                 state.currentQueueIndex = 0;
             }
-
             state.currentTrack = track;
             state.currentTime = 0;
             state.isPlaying = true;
@@ -1767,39 +1869,25 @@
             timeCurrent.textContent = '0:00';
             timeTotal.textContent = '0:00';
 
-            // Ferma il player precedente
             try { audioPlayer.pause(); } catch (e) {}
-
-            // Mostra subito lo stato "caricamento"
             updatePlayPauseUI();
 
-            // 1. Tenta di ottenere l'URL audio diretto
             const streamData = await getAudioStreamUrl(track.videoId);
-
             if (streamData && streamData.url) {
-                // ✅ SUCCESSO: usa il player HTML5 (VELOCE!)
                 state.currentAudioUrl = streamData.url;
                 state.usingFallback = false;
                 state.duration = streamData.duration || state.durationCache[track.videoId] || 240;
-
                 audioPlayer.src = streamData.url;
                 audioPlayer.volume = state.isMuted ? 0 : Math.max(0, Math.min(1, state.volume / 100));
-
                 try {
                     await audioPlayer.play();
-                    console.log('▶️ Audio partito con HTML5');
                 } catch (e) {
-                    console.warn('Autoplay bloccato, uso fallback YouTube:', e);
                     useYouTubeFallback(track);
                 }
-
                 timeTotal.textContent = formatTime(state.duration);
                 updateProgressUI();
             } else {
-                // ❌ FALLBACK: usa iframe YouTube
-                console.log('⚠️ Nessun audio diretto, uso YouTube fallback');
                 useYouTubeFallback(track);
-                // Recupera durata da API
                 fetchVideoDuration(track.videoId).then(d => {
                     state.duration = d;
                     timeTotal.textContent = formatTime(d);
@@ -1817,18 +1905,13 @@
                 return;
             }
             if (state.usingFallback) {
-                // Usa comandi YouTube
                 state.isPlaying = !state.isPlaying;
                 if (state.isPlaying) sendYTCommand('playVideo');
                 else sendYTCommand('pauseVideo');
                 updatePlayPauseUI();
             } else {
-                // Player HTML5
-                if (audioPlayer.paused) {
-                    audioPlayer.play().catch(() => {});
-                } else {
-                    audioPlayer.pause();
-                }
+                if (audioPlayer.paused) audioPlayer.play().catch(() => {});
+                else audioPlayer.pause();
             }
             broadcastStateToPopup();
         };
@@ -1836,9 +1919,8 @@
         const playNext = () => {
             if (state.currentQueue.length === 0) return;
             let nextIndex = state.currentQueueIndex + 1;
-            if (state.isShuffle) {
-                nextIndex = Math.floor(Math.random() * state.currentQueue.length);
-            } else if (nextIndex >= state.currentQueue.length) {
+            if (state.isShuffle) nextIndex = Math.floor(Math.random() * state.currentQueue.length);
+            else if (nextIndex >= state.currentQueue.length) {
                 if (state.isRepeat) nextIndex = 0;
                 else { showToast('Fine della coda', 'fa-info-circle', 'info'); return; }
             }
@@ -1873,9 +1955,6 @@
             broadcastStateToPopup();
         };
 
-        // ============================================================
-        // VOLUME
-        // ============================================================
         const setVolumeFromEvent = (e) => {
             const rect = volumeSlider.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -1883,9 +1962,7 @@
             state.volume = percent;
             state.isMuted = false;
             applyVolume();
-            if (state.usingFallback) {
-                sendYTCommand('setVolume', String(Math.round(state.volume)));
-            }
+            if (state.usingFallback) sendYTCommand('setVolume', String(Math.round(state.volume)));
             saveStorage();
             broadcastStateToPopup();
         };
@@ -1897,12 +1974,18 @@
             document.addEventListener('mousemove', onVolumeMouseMove);
             document.addEventListener('mouseup', onVolumeMouseUp);
         });
+        volumeSlider.addEventListener('touchstart', (e) => {
+            volumeDragging = true;
+            setVolumeFromEvent(e);
+        }, { passive: true });
         const onVolumeMouseMove = (e) => { if (volumeDragging) setVolumeFromEvent(e); };
         const onVolumeMouseUp = () => {
             volumeDragging = false;
             document.removeEventListener('mousemove', onVolumeMouseMove);
             document.removeEventListener('mouseup', onVolumeMouseUp);
         };
+        document.addEventListener('touchmove', (e) => { if (volumeDragging) setVolumeFromEvent(e); }, { passive: true });
+        document.addEventListener('touchend', () => { volumeDragging = false; });
 
         volumeBtn.addEventListener('click', () => {
             if (state.isMuted) {
@@ -1913,16 +1996,11 @@
                 state.isMuted = true;
             }
             applyVolume();
-            if (state.usingFallback) {
-                sendYTCommand('setVolume', String(state.isMuted ? 0 : Math.round(state.volume)));
-            }
+            if (state.usingFallback) sendYTCommand('setVolume', String(state.isMuted ? 0 : Math.round(state.volume)));
             saveStorage();
             broadcastStateToPopup();
         });
 
-        // ============================================================
-        // PROGRESS BAR
-        // ============================================================
         let progressDragging = false;
         const seekFromEvent = (e) => {
             const rect = progressBar.getBoundingClientRect();
@@ -1930,11 +2008,8 @@
             const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
             state.currentTime = (percent / 100) * state.duration;
             updateProgressUI();
-            if (state.usingFallback) {
-                sendYTCommand('seekTo', String(Math.floor(state.currentTime)));
-            } else {
-                try { audioPlayer.currentTime = state.currentTime; } catch (e) {}
-            }
+            if (state.usingFallback) sendYTCommand('seekTo', String(Math.floor(state.currentTime)));
+            else { try { audioPlayer.currentTime = state.currentTime; } catch (e) {} }
             broadcastStateToPopup();
         };
         progressBar.addEventListener('mousedown', (e) => {
@@ -1943,16 +2018,19 @@
             document.addEventListener('mousemove', onProgressMouseMove);
             document.addEventListener('mouseup', onProgressMouseUp);
         });
+        progressBar.addEventListener('touchstart', (e) => {
+            progressDragging = true;
+            seekFromEvent(e);
+        }, { passive: true });
         const onProgressMouseMove = (e) => { if (progressDragging) seekFromEvent(e); };
         const onProgressMouseUp = () => {
             progressDragging = false;
             document.removeEventListener('mousemove', onProgressMouseMove);
             document.removeEventListener('mouseup', onProgressMouseUp);
         };
+        document.addEventListener('touchmove', (e) => { if (progressDragging) seekFromEvent(e); }, { passive: true });
+        document.addEventListener('touchend', () => { progressDragging = false; });
 
-        // ============================================================
-        // PULSANTI
-        // ============================================================
         playPauseBtn.addEventListener('click', togglePlayPause);
         nextBtn.addEventListener('click', playNext);
         prevBtn.addEventListener('click', playPrev);
@@ -1979,9 +2057,6 @@
             }
         };
 
-        // ============================================================
-        // POPUP PLAYER 380x520
-        // ============================================================
         let popupPlayer = null;
         const openPopupPlayer = () => {
             if (!state.currentTrack) {
@@ -2158,9 +2233,6 @@ window.addEventListener('load', () => {
             }
         });
 
-        // ============================================================
-        // FETCH DURATA (fallback)
-        // ============================================================
         const fetchVideoDuration = async (videoId) => {
             if (state.durationCache[videoId]) return state.durationCache[videoId];
             try {
@@ -2185,9 +2257,6 @@ window.addEventListener('load', () => {
             return 240;
         };
 
-        // ============================================================
-        // PLAYLIST / FAVORITI / CRONOLOGIA
-        // ============================================================
         const getPlaylist = (id) => state.playlists.find(p => p.id === id);
         const createPlaylist = (name, onCreated) => {
             const trimmed = (name || '').trim();
@@ -2327,9 +2396,6 @@ window.addEventListener('load', () => {
             });
         };
 
-        // ============================================================
-        // RENDER
-        // ============================================================
         const renderCards = (items, container, options = {}) => {
             if (!items || items.length === 0) {
                 container.innerHTML = `<div class="status-message"><i class="fas fa-search"></i><h2>Nessun risultato</h2></div>`;
@@ -2822,7 +2888,7 @@ window.addEventListener('load', () => {
             renderPlaylistMiniList();
             applyVolume();
             renderHome();
-            console.log('🚀 Spotube avviato con player audio HTML5');
+            console.log('🚀 Spotube avviato');
         };
 
         return { init, showHome, playTrack };
