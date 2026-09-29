@@ -80,7 +80,6 @@
         ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-        /* ============ TOP BAR ============ */
         .top-bar {
             display: flex;
             align-items: center;
@@ -208,10 +207,8 @@
 
         .user-badge i { font-size: 1.5rem; color: var(--accent); }
 
-        /* ============ LAYOUT ============ */
         .main-layout { display: flex; flex: 1; overflow: hidden; }
 
-        /* ============ SIDEBAR ============ */
         .sidebar {
             width: 250px;
             background: var(--bg-sidebar);
@@ -342,7 +339,6 @@
             color: var(--text-muted);
         }
 
-        /* ============ CONTENUTO ============ */
         .content {
             flex: 1;
             overflow-y: auto;
@@ -490,7 +486,6 @@
             border-color: var(--accent-red);
         }
 
-        /* ============ GRIGLIA ============ */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -626,7 +621,6 @@
         .card-action-btn.add-btn:hover { color: var(--accent); }
         .card-action-btn.pip-btn:hover { color: var(--accent-blue); }
 
-        /* ============ LISTA BRANI ============ */
         .tracks-list { display: flex; flex-direction: column; gap: 2px; }
 
         .track-row {
@@ -698,7 +692,6 @@
         .track-action-btn.active { color: var(--accent); }
         .track-action-btn.delete-btn:hover { color: var(--accent-red); background: rgba(255, 71, 87, 0.1); }
 
-        /* ============ STATI ============ */
         .status-message {
             display: flex;
             flex-direction: column;
@@ -721,7 +714,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ============ PLAYER ============ */
         .player-bar {
             background: var(--bg-player);
             border-top: 1px solid var(--border);
@@ -893,15 +885,7 @@
             transform: scale(1.08);
         }
 
-        .player-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .player-btn.active {
-            color: var(--accent);
-        }
+        .player-btn.active { color: var(--accent); }
 
         .player-btn-play {
             width: 40px;
@@ -922,12 +906,6 @@
         .player-btn-play:hover {
             transform: scale(1.08);
             box-shadow: 0 4px 12px var(--shadow);
-        }
-
-        .player-btn-play:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none !important;
         }
 
         .player-time {
@@ -1021,17 +999,18 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
+        /* Player YouTube nascosto ma visibile al browser (NON usare display:none!) */
         .yt-hidden-iframe {
             position: absolute;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
+            width: 200px;
+            height: 120px;
+            opacity: 0.001;
             pointer-events: none;
-            top: -9999px;
-            left: -9999px;
+            bottom: 0;
+            left: 0;
+            z-index: -1;
         }
 
-        /* ============ TOAST ============ */
         .toast-container {
             position: fixed;
             bottom: 130px;
@@ -1073,7 +1052,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* ============ MODALE ============ */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -1104,19 +1082,8 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        .modal h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        .modal p {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
+        .modal h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; color: var(--text-primary); }
+        .modal p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
 
         .modal input, .modal select {
             width: 100%;
@@ -1136,11 +1103,7 @@
             box-shadow: 0 0 0 3px rgba(30, 215, 96, 0.15);
         }
 
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
 
         .modal-btn {
             padding: 10px 20px;
@@ -1152,28 +1115,13 @@
             transition: all 0.15s;
         }
 
-        .modal-btn.cancel {
-            background: var(--bg-input);
-            color: var(--text-primary);
-        }
-
+        .modal-btn.cancel { background: var(--bg-input); color: var(--text-primary); }
         .modal-btn.cancel:hover { background: var(--bg-hover); }
-
-        .modal-btn.confirm {
-            background: var(--accent-red);
-            color: #fff;
-        }
-
+        .modal-btn.confirm { background: var(--accent-red); color: #fff; }
         .modal-btn.confirm:hover { background: #ff2e43; }
-
-        .modal-btn.primary {
-            background: var(--accent);
-            color: #000;
-        }
-
+        .modal-btn.primary { background: var(--accent); color: #000; }
         .modal-btn.primary:hover { background: var(--accent-hover); }
 
-        /* ============ PLAYLIST ============ */
         .playlist-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1228,10 +1176,7 @@
             color: var(--text-primary);
         }
 
-        .playlist-count {
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-        }
+        .playlist-count { font-size: 0.78rem; color: var(--text-secondary); }
 
         .playlist-delete {
             position: absolute;
@@ -1257,7 +1202,6 @@
         .playlist-card:hover .playlist-delete { opacity: 1; }
         .playlist-delete:hover { background: var(--accent-red); transform: scale(1.1); }
 
-        /* ============ AVVISO FILE:// ============ */
         .file-warning {
             display: none;
             background: linear-gradient(90deg, #ff6b6b, #ff8e53);
@@ -1277,7 +1221,6 @@
             font-family: monospace;
         }
 
-        /* ============ RESPONSIVE ============ */
         @media (max-width: 1024px) {
             .content-header-icon { width: 100px; height: 100px; font-size: 2.5rem; }
             .content-header-title { font-size: 1.8rem; }
@@ -1300,7 +1243,6 @@
             .content-header { flex-direction: column; align-items: flex-start; }
             .content-header-icon { width: 80px; height: 80px; font-size: 2rem; }
             .content-header-title { font-size: 1.5rem; }
-            .track-row { grid-template-columns: 30px 1fr 80px; }
         }
 
         @media (max-width: 600px) {
@@ -1342,7 +1284,7 @@
             <input type="text" id="searchInput" placeholder="Cerca brani, artisti, video..." autocomplete="off">
         </div>
         <div class="top-actions">
-            <button class="pip-toggle" id="popupToggle" title="Apri player in finestra separata (sincronizzato)">
+            <button class="pip-toggle" id="popupToggle" title="Apri player in finestra separata">
                 <i class="fas fa-external-link-alt"></i>
             </button>
             <button class="theme-toggle" id="themeToggle" title="Cambia tema">
@@ -1392,7 +1334,6 @@
         <main class="content" id="contentArea"></main>
     </div>
 
-    <!-- PLAYER MODERNO -->
     <footer class="player-bar">
         <div class="player-progress" id="progressBar">
             <div class="player-progress-bar" id="progressBarFill">
@@ -1453,7 +1394,8 @@
             </div>
         </div>
 
-        <div class="yt-hidden-iframe" id="ytHiddenContainer"></div>
+        <!-- IL PLAYER YOUTUBE: la div che conterrà il player verrà creata via JS -->
+        <div class="yt-hidden-iframe" id="ytPlayerContainer"></div>
     </footer>
 
     <div class="toast-container" id="toastContainer"></div>
@@ -1470,9 +1412,12 @@
         </div>
     </div>
 
+    <!-- API IFrame YouTube caricata UNA SOLA VOLTA all'avvio -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
     // ============================================================
-    // SPOTUBE - APP PRINCIPALE
+    // SPOTUBE - VERSIONE CON YT.Player API (avvio istantaneo)
     // ============================================================
     const app = (function() {
         const API_KEY = 'AIzaSyBIa5Se73P09TNGcSSvRNUiYgH6DJmU8T8';
@@ -1482,14 +1427,9 @@
         const DEFAULT_THUMB = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 24 24' fill='%232a2a2a'%3E%3Crect width='24' height='24' fill='%23111'/%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z' fill='%23333'/%3E%3C/svg%3E";
 
         const PLAYLIST_COLORS = [
-            ['#1ed760', '#0f9d58'],
-            ['#ff6b8a', '#c9184a'],
-            ['#4ea8de', '#1e6091'],
-            ['#a855f7', '#6b21a8'],
-            ['#ffa726', '#e65100'],
-            ['#26c6da', '#00838f'],
-            ['#ff7043', '#bf360c'],
-            ['#ec407a', '#880e4f']
+            ['#1ed760', '#0f9d58'], ['#ff6b8a', '#c9184a'], ['#4ea8de', '#1e6091'],
+            ['#a855f7', '#6b21a8'], ['#ffa726', '#e65100'], ['#26c6da', '#00838f'],
+            ['#ff7043', '#bf360c'], ['#ec407a', '#880e4f']
         ];
 
         const state = {
@@ -1508,11 +1448,13 @@
             volume: parseFloat(localStorage.getItem('spotube_volume') || '100'),
             isMuted: false,
             lastVolume: 100,
+            currentQueue: [],
+            currentQueueIndex: -1,
+            ytPlayer: null,          // riferimento al player YouTube API
+            ytReady: false,          // player pronto
             currentTime: 0,
             duration: 0,
-            progressInterval: null,
-            currentQueue: [],
-            currentQueueIndex: -1
+            progressInterval: null
         };
 
         const searchInput     = document.getElementById('searchInput');
@@ -1552,7 +1494,7 @@
         const volumeIcon      = document.getElementById('volumeIcon');
         const volumeBtn       = document.getElementById('volumeBtn');
         const popupBtnInPlayer = document.getElementById('popupBtnInPlayer');
-        const ytHiddenContainer = document.getElementById('ytHiddenContainer');
+        const ytPlayerContainer = document.getElementById('ytPlayerContainer');
 
         const escapeHtml = (s) => String(s || '').replace(/[&<>"']/g, c => ({
             '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -1623,11 +1565,9 @@
             if (theme === 'light') {
                 document.body.classList.add('light-theme');
                 themeIcon.className = 'fas fa-sun';
-                themeToggle.title = 'Passa al tema scuro';
             } else {
                 document.body.classList.remove('light-theme');
                 themeIcon.className = 'fas fa-moon';
-                themeToggle.title = 'Passa al tema chiaro';
             }
             localStorage.setItem('spotube_theme', theme);
             if (popupPlayer && !popupPlayer.closed) {
@@ -1643,69 +1583,109 @@
         });
 
         // ============================================================
-        // PLAYER YOUTUBE
+        // YOUTUBE IFRAME API - Inizializzata UNA SOLA VOLTA
         // ============================================================
-        const getYouTubeOrigin = () => {
-            let origin = window.location.origin;
-            const hostname = window.location.hostname;
-            if (hostname === '[::1]' || hostname === '127.0.0.1' || hostname === '::1') {
-                origin = 'http://localhost:' + (window.location.port || '80');
-            }
-            return origin;
+        window.onYouTubeIframeAPIReady = function() {
+            console.log('✅ YouTube IFrame API pronta');
+            initYTPlayer();
         };
 
-        const sendYTCommand = (func, args = '') => {
-            const iframe = ytHiddenContainer.querySelector('iframe');
-            if (!iframe || !iframe.contentWindow) return;
-            try {
-                iframe.contentWindow.postMessage(
-                    JSON.stringify({ event: 'command', func: func, args: args }),
-                    '*'
-                );
-            } catch (e) {
-                console.warn('Errore invio comando YT:', e);
-            }
+        const initYTPlayer = () => {
+            // Crea un div nascosto per il player
+            const playerDiv = document.createElement('div');
+            playerDiv.id = 'ytPlayer';
+            ytPlayerContainer.appendChild(playerDiv);
+
+            state.ytPlayer = new YT.Player('ytPlayer', {
+                height: '120',
+                width: '200',
+                videoId: '',  // vuoto all'inizio
+                playerVars: {
+                    autoplay: 1,
+                    controls: 0,
+                    disablekb: 1,
+                    fs: 0,
+                    modestbranding: 1,
+                    rel: 0,
+                    playsinline: 1,
+                    origin: window.location.origin
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
         };
 
-        const applyVolume = () => {
-            if (state.isMuted) sendYTCommand('setVolume', '0');
-            else sendYTCommand('setVolume', String(state.volume));
-            volumeLevel.style.width = (state.isMuted ? 0 : state.volume) + '%';
-            if (state.isMuted || state.volume === 0) {
-                volumeIcon.className = 'fas fa-volume-xmark';
-            } else if (state.volume < 50) {
-                volumeIcon.className = 'fas fa-volume-low';
-            } else {
-                volumeIcon.className = 'fas fa-volume-high';
-            }
+        const onPlayerReady = (event) => {
+            state.ytReady = true;
+            console.log('🎵 Player YouTube pronto');
+            event.target.setVolume(state.isMuted ? 0 : state.volume);
         };
 
-        const loadVideoInHiddenIframe = (track) => {
-            if (!track) return;
-            const origin = getYouTubeOrigin();
-            const embedUrl = `https://www.youtube.com/embed/${track.videoId}`
-                + `?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0`
-                + `&enablejsapi=1`
-                + `&origin=${encodeURIComponent(origin)}`
-                + `&widget_referrer=${encodeURIComponent(origin)}`;
-
-            ytHiddenContainer.innerHTML = `
-                <iframe
-                    src="${embedUrl}"
-                    allow="autoplay; encrypted-media"
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen>
-                </iframe>
-            `;
-
-            setTimeout(() => {
-                applyVolume();
-                sendYTCommand('playVideo');
+        const onPlayerStateChange = (event) => {
+            // YT.PlayerState: UNSTARTED(-1), ENDED(0), PLAYING(1), PAUSED(2), BUFFERING(3), CUED(5)
+            const stateCode = event.data;
+            if (stateCode === YT.PlayerState.PLAYING) {
                 state.isPlaying = true;
+                state.duration = event.target.getDuration() || 0;
+                timeTotal.textContent = formatTime(state.duration);
                 updatePlayPauseUI();
                 startProgressTracking();
                 broadcastStateToPopup();
-            }, 800);
+            } else if (stateCode === YT.PlayerState.PAUSED) {
+                state.isPlaying = false;
+                updatePlayPauseUI();
+                broadcastStateToPopup();
+            } else if (stateCode === YT.PlayerState.ENDED) {
+                if (state.isRepeat) {
+                    event.target.seekTo(0);
+                    event.target.playVideo();
+                } else {
+                    playNext();
+                }
+            } else if (stateCode === YT.PlayerState.BUFFERING) {
+                // In buffering
+            }
+        };
+
+        const onPlayerError = (event) => {
+            console.warn('Errore player YouTube:', event.data);
+            // Prova a passare al prossimo
+            if (event.data === 100 || event.data === 101 || event.data === 150) {
+                showToast('Video non disponibile, passo al prossimo', 'fa-exclamation-triangle', 'warning');
+                setTimeout(playNext, 1000);
+            }
+        };
+
+        // ============================================================
+        // CONTROLLI PLAYER YT
+        // ============================================================
+        const startProgressTracking = () => {
+            if (state.progressInterval) clearInterval(state.progressInterval);
+            state.progressInterval = setInterval(() => {
+                if (!state.ytPlayer || !state.ytReady) return;
+                if (!state.isPlaying) return;
+                try {
+                    state.currentTime = state.ytPlayer.getCurrentTime() || 0;
+                    const dur = state.ytPlayer.getDuration() || 0;
+                    if (dur > 0 && dur !== state.duration) {
+                        state.duration = dur;
+                        timeTotal.textContent = formatTime(dur);
+                    }
+                    updateProgressUI();
+                    if (Math.floor(state.currentTime * 2) % 2 === 0) {
+                        broadcastStateToPopup();
+                    }
+                } catch (e) {}
+            }, 500);
+        };
+
+        const updateProgressUI = () => {
+            const percent = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
+            progressBarFill.style.width = percent + '%';
+            timeCurrent.textContent = formatTime(state.currentTime);
         };
 
         const updatePlayPauseUI = () => {
@@ -1718,49 +1698,20 @@
             }
         };
 
-        const startProgressTracking = () => {
-            if (state.progressInterval) clearInterval(state.progressInterval);
-            state.progressInterval = setInterval(() => {
-                if (!state.currentTrack || !state.isPlaying) return;
-                if (state.currentTime < state.duration) {
-                    state.currentTime += 0.5;
-                    if (state.currentTime > state.duration) state.currentTime = state.duration;
-                    updateProgressUI();
-                    // Aggiorna il popup periodicamente
-                    if (Math.floor(state.currentTime * 2) % 2 === 0) {
-                        broadcastStateToPopup();
-                    }
-                }
-            }, 500);
-        };
-
-        const updateProgressUI = () => {
-            const percent = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
-            progressBarFill.style.width = percent + '%';
-            timeCurrent.textContent = formatTime(state.currentTime);
-            timeTotal.textContent = formatTime(state.duration);
-        };
-
-        const fetchVideoDuration = async (videoId) => {
-            try {
-                const res = await fetch(`${YT_API}/videos?part=contentDetails&id=${videoId}&key=${API_KEY}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    const iso = data.items?.[0]?.contentDetails?.duration;
-                    if (iso) {
-                        const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-                        if (match) {
-                            const h = parseInt(match[1] || 0);
-                            const m = parseInt(match[2] || 0);
-                            const s = parseInt(match[3] || 0);
-                            return h * 3600 + m * 60 + s;
-                        }
-                    }
-                }
-            } catch (e) {
-                console.warn('Impossibile recuperare durata:', e);
+        const applyVolume = () => {
+            if (state.ytPlayer && state.ytReady) {
+                try {
+                    state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
+                } catch (e) {}
             }
-            return 240;
+            volumeLevel.style.width = (state.isMuted ? 0 : state.volume) + '%';
+            if (state.isMuted || state.volume === 0) {
+                volumeIcon.className = 'fas fa-volume-xmark';
+            } else if (state.volume < 50) {
+                volumeIcon.className = 'fas fa-volume-low';
+            } else {
+                volumeIcon.className = 'fas fa-volume-high';
+            }
         };
 
         const broadcastStateToPopup = () => {
@@ -1781,6 +1732,9 @@
             }, '*');
         };
 
+        // ============================================================
+        // RICEZIONE COMANDI DAL POPUP
+        // ============================================================
         window.addEventListener('message', (event) => {
             const data = event.data;
             if (!data || !data.type) return;
@@ -1789,12 +1743,12 @@
                 const command = data.command;
                 if (command === 'play') {
                     state.isPlaying = true;
-                    sendYTCommand('playVideo');
+                    if (state.ytPlayer && state.ytReady) state.ytPlayer.playVideo();
                     updatePlayPauseUI();
                     broadcastStateToPopup();
                 } else if (command === 'pause') {
                     state.isPlaying = false;
-                    sendYTCommand('pauseVideo');
+                    if (state.ytPlayer && state.ytReady) state.ytPlayer.pauseVideo();
                     updatePlayPauseUI();
                     broadcastStateToPopup();
                 } else if (command === 'togglePlayPause') {
@@ -1805,7 +1759,7 @@
                     playPrev();
                 } else if (command === 'seek') {
                     state.currentTime = data.value;
-                    sendYTCommand('seekTo', String(Math.floor(data.value)));
+                    if (state.ytPlayer && state.ytReady) state.ytPlayer.seekTo(data.value, true);
                     updateProgressUI();
                     broadcastStateToPopup();
                 } else if (command === 'setVolume') {
@@ -1820,7 +1774,10 @@
             }
         });
 
-        const playTrack = async (track, queue = null, index = -1) => {
+        // ============================================================
+        // PLAYTRACK - VELOCISSIMO con loadVideoById
+        // ============================================================
+        const playTrack = (track, queue = null, index = -1) => {
             if (!track) return;
 
             if (queue && Array.isArray(queue)) {
@@ -1835,6 +1792,7 @@
             state.currentTime = 0;
             state.isPlaying = true;
 
+            // Aggiorna UI
             playerTitle.textContent = track.title;
             playerChannel.textContent = track.channel;
             playerCover.src = track.thumbnail || DEFAULT_THUMB;
@@ -1844,10 +1802,30 @@
             timeCurrent.textContent = '0:00';
             timeTotal.textContent = '0:00';
 
-            state.duration = await fetchVideoDuration(track.videoId);
-            timeTotal.textContent = formatTime(state.duration);
-
-            loadVideoInHiddenIframe(track);
+            // ⚡ AVVIO ISTANTANEO: loadVideoById cambia video senza ricreare player
+            if (state.ytPlayer && state.ytReady) {
+                try {
+                    state.ytPlayer.loadVideoById(track.videoId);
+                    state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
+                    state.isPlaying = true;
+                    updatePlayPauseUI();
+                } catch (e) {
+                    console.warn('Errore loadVideoById:', e);
+                }
+            } else {
+                // Se il player non è ancora pronto, riprova tra 200ms
+                const retry = (attempt = 0) => {
+                    if (state.ytPlayer && state.ytReady) {
+                        try {
+                            state.ytPlayer.loadVideoById(track.videoId);
+                            state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
+                        } catch (e) {}
+                    } else if (attempt < 20) {
+                        setTimeout(() => retry(attempt + 1), 200);
+                    }
+                };
+                retry();
+            }
 
             addToHistory(track);
             if (state.view === 'history') renderHistory();
@@ -1858,11 +1836,14 @@
                 showToast('Nessun brano selezionato', 'fa-info-circle', 'warning');
                 return;
             }
-            state.isPlaying = !state.isPlaying;
-            if (state.isPlaying) sendYTCommand('playVideo');
-            else sendYTCommand('pauseVideo');
-            updatePlayPauseUI();
-            broadcastStateToPopup();
+            if (!state.ytPlayer || !state.ytReady) return;
+            try {
+                if (state.isPlaying) {
+                    state.ytPlayer.pauseVideo();
+                } else {
+                    state.ytPlayer.playVideo();
+                }
+            } catch (e) {}
         };
 
         const playNext = () => {
@@ -1881,7 +1862,7 @@
             if (state.currentQueue.length === 0) return;
             if (state.currentTime > 3) {
                 state.currentTime = 0;
-                sendYTCommand('seekTo', '0');
+                if (state.ytPlayer && state.ytReady) state.ytPlayer.seekTo(0, true);
                 updateProgressUI();
                 broadcastStateToPopup();
                 return;
@@ -1905,6 +1886,9 @@
             broadcastStateToPopup();
         };
 
+        // ============================================================
+        // VOLUME
+        // ============================================================
         const setVolumeFromEvent = (e) => {
             const rect = volumeSlider.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -1949,6 +1933,9 @@
             broadcastStateToPopup();
         });
 
+        // ============================================================
+        // PROGRESS BAR
+        // ============================================================
         let progressDragging = false;
 
         const seekFromEvent = (e) => {
@@ -1956,8 +1943,10 @@
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
             const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
             state.currentTime = (percent / 100) * state.duration;
+            if (state.ytPlayer && state.ytReady) {
+                try { state.ytPlayer.seekTo(state.currentTime, true); } catch (e) {}
+            }
             updateProgressUI();
-            sendYTCommand('seekTo', String(Math.floor(state.currentTime)));
             broadcastStateToPopup();
         };
 
@@ -1979,6 +1968,9 @@
             document.removeEventListener('mouseup', onProgressMouseUp);
         };
 
+        // ============================================================
+        // PULSANTI
+        // ============================================================
         playPauseBtn.addEventListener('click', togglePlayPause);
         nextBtn.addEventListener('click', playNext);
         prevBtn.addEventListener('click', playPrev);
@@ -2007,7 +1999,7 @@
         };
 
         // ============================================================
-        // POPUP PLAYER 380x520 (come da immagine)
+        // POPUP PLAYER 380x520
         // ============================================================
         let popupPlayer = null;
 
@@ -2016,16 +2008,13 @@
                 showToast('Riproduci prima un brano!', 'fa-info-circle', 'warning');
                 return;
             }
-
             if (popupPlayer && !popupPlayer.closed) {
                 popupPlayer.focus();
                 broadcastStateToPopup();
                 return;
             }
 
-            // MISURE ESATTE COME NELL'IMMAGINE
-            const width = 380;
-            const height = 520;
+            const width = 380, height = 520;
             const left = window.screen.width - width - 40;
             const top = Math.max(40, window.screen.height - height - 80);
 
@@ -2039,330 +2028,89 @@
 
             const track = state.currentTrack;
             const isLight = state.theme === 'light';
-
             const colors = isLight ? {
-                bg: '#ffffff',
-                bgSecondary: '#f5f5f7',
-                text: '#111111',
-                textSecondary: '#555555',
-                border: 'rgba(0,0,0,0.08)',
-                accent: '#0f9d58',
-                hover: 'rgba(0,0,0,0.05)',
-                progress: '#e0e0e0'
+                bg: '#ffffff', bgSecondary: '#f5f5f7', text: '#111111',
+                textSecondary: '#555555', border: 'rgba(0,0,0,0.08)',
+                accent: '#0f9d58', hover: 'rgba(0,0,0,0.05)', progress: '#e0e0e0'
             } : {
-                bg: '#0a0a0f',
-                bgSecondary: '#1a1a22',
-                text: '#ffffff',
-                textSecondary: '#b3b3b3',
-                border: 'rgba(255,255,255,0.08)',
-                accent: '#1ed760',
-                hover: 'rgba(255,255,255,0.05)',
-                progress: 'rgba(255,255,255,0.1)'
+                bg: '#0a0a0f', bgSecondary: '#1a1a22', text: '#ffffff',
+                textSecondary: '#b3b3b3', border: 'rgba(255,255,255,0.08)',
+                accent: '#1ed760', hover: 'rgba(255,255,255,0.05)', progress: 'rgba(255,255,255,0.1)'
             };
 
             const htmlContent = `<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<title>Spotube Remote</title>
+<html lang="it"><head><meta charset="UTF-8"><title>Spotube Remote</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
-body {
-    background:${colors.bg};
-    color:${colors.text};
-    height:100vh;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    user-select:none;
-}
-
-/* HEADER */
-.header {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:14px 16px;
-    border-bottom:1px solid ${colors.border};
-    flex-shrink:0;
-}
-.logo {
-    color:${colors.accent};
-    font-size:1.2rem;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-.title {
-    flex:1;
-    font-size:0.75rem;
-    font-weight:800;
-    letter-spacing:1.5px;
-    text-transform:uppercase;
-    color:${colors.text};
-}
-.btn-close {
-    width:28px;
-    height:28px;
-    border-radius:50%;
-    background:transparent;
-    border:none;
-    color:${colors.textSecondary};
-    cursor:pointer;
-    font-size:0.85rem;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:all 0.15s;
-}
-.btn-close:hover {
-    background:${colors.hover};
-    color:${colors.text};
-}
-
-/* AREA TRACK */
-.track-area {
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:20px 24px;
-    gap:18px;
-    min-height:0;
-}
-
-.cover-wrapper {
-    width:180px;
-    height:180px;
-    border-radius:14px;
-    overflow:hidden;
-    background:${colors.bgSecondary};
-    box-shadow:0 20px 40px -10px rgba(0,0,0,0.5);
-    position:relative;
-    flex-shrink:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-.cover-wrapper img {
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-}
-
-.info {
-    width:100%;
-    text-align:center;
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    padding:0 4px;
-}
-.track-title {
-    font-size:1rem;
-    font-weight:700;
-    color:${colors.text};
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    line-height:1.3;
-}
-.track-channel {
-    font-size:0.85rem;
-    color:${colors.textSecondary};
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-/* PROGRESS */
-.progress-row {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    width:100%;
-    padding:0 4px;
-    margin-top:6px;
-}
-.time {
-    font-size:0.72rem;
-    color:${colors.textSecondary};
-    min-width:36px;
-    text-align:center;
-    font-variant-numeric:tabular-nums;
-    font-weight:500;
-}
-.progress {
-    flex:1;
-    height:5px;
-    background:${colors.progress};
-    border-radius:3px;
-    cursor:pointer;
-    position:relative;
-    transition:height 0.15s;
-}
-.progress:hover {
-    height:7px;
-}
-.progress-bar {
-    height:100%;
-    background:${colors.accent};
-    width:0%;
-    border-radius:3px;
-    transition:width 0.3s linear;
-    position:relative;
-}
-.progress-thumb {
-    position:absolute;
-    right:-5px;
-    top:50%;
-    transform:translate(0, -50%) scale(0);
-    width:12px;
-    height:12px;
-    border-radius:50%;
-    background:#fff;
-    box-shadow:0 2px 6px rgba(0,0,0,0.4);
-    opacity:0;
-    transition:opacity 0.15s, transform 0.15s;
-    pointer-events:none;
-}
-.progress:hover .progress-thumb {
-    opacity:1;
-    transform:translate(0, -50%) scale(1);
-}
-
-/* CONTROLLI */
-.controls {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:22px;
-    padding:16px 20px 24px 20px;
-    flex-shrink:0;
-}
-
-.btn {
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    background:transparent;
-    border:none;
-    color:${colors.textSecondary};
-    cursor:pointer;
-    font-size:1.1rem;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:all 0.15s;
-}
-.btn:hover {
-    color:${colors.text};
-    transform:scale(1.1);
-}
-.btn:active {
-    transform:scale(0.95);
-}
-.btn:disabled {
-    opacity:0.3;
-    cursor:not-allowed;
-    transform:none;
-}
-
-.btn-play {
-    width:70px;
-    height:70px;
-    background:#ffffff;
-    color:#000000;
-    font-size:1.6rem;
-    box-shadow:0 8px 20px rgba(0,0,0,0.3);
-}
-.btn-play:hover {
-    background:#ffffff;
-    color:#000000;
-    transform:scale(1.06);
-}
-.btn-play:active {
-    transform:scale(0.98);
-}
-</style>
-</head>
-<body>
-
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+body { background:${colors.bg}; color:${colors.text}; height:100vh; overflow:hidden; display:flex; flex-direction:column; user-select:none; }
+.header { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid ${colors.border}; flex-shrink:0; }
+.logo { color:${colors.accent}; font-size:1.2rem; }
+.title { flex:1; font-size:0.75rem; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:${colors.text}; }
+.btn-close { width:28px; height:28px; border-radius:50%; background:transparent; border:none; color:${colors.textSecondary}; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; justify-content:center; }
+.btn-close:hover { background:${colors.hover}; color:${colors.text}; }
+.track-area { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 24px; gap:18px; min-height:0; }
+.cover-wrapper { width:180px; height:180px; border-radius:14px; overflow:hidden; background:${colors.bgSecondary}; box-shadow:0 20px 40px -10px rgba(0,0,0,0.5); flex-shrink:0; }
+.cover-wrapper img { width:100%; height:100%; object-fit:cover; display:block; }
+.info { width:100%; text-align:center; display:flex; flex-direction:column; gap:6px; }
+.track-title { font-size:1rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.track-channel { font-size:0.85rem; color:${colors.textSecondary}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.progress-row { display:flex; align-items:center; gap:10px; width:100%; margin-top:6px; }
+.time { font-size:0.72rem; color:${colors.textSecondary}; min-width:36px; text-align:center; font-variant-numeric:tabular-nums; }
+.progress { flex:1; height:5px; background:${colors.progress}; border-radius:3px; cursor:pointer; position:relative; }
+.progress-bar { height:100%; background:${colors.accent}; width:0%; border-radius:3px; transition:width 0.3s linear; }
+.controls { display:flex; align-items:center; justify-content:center; gap:22px; padding:16px 20px 24px 20px; flex-shrink:0; }
+.btn { width:44px; height:44px; border-radius:50%; background:transparent; border:none; color:${colors.textSecondary}; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.btn:hover { color:${colors.text}; transform:scale(1.1); }
+.btn-play { width:70px; height:70px; background:#ffffff; color:#000000; font-size:1.6rem; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
+.btn-play:hover { transform:scale(1.06); }
+</style></head><body>
 <div class="header">
-    <i class="fas fa-play-circle logo"></i>
-    <span class="title">Spotube Remote</span>
-    <button class="btn-close" onclick="window.close()" title="Chiudi"><i class="fas fa-times"></i></button>
+<i class="fas fa-play-circle logo"></i>
+<span class="title">Spotube Remote</span>
+<button class="btn-close" onclick="window.close()"><i class="fas fa-times"></i></button>
 </div>
-
 <div class="track-area">
-    <div class="cover-wrapper">
-        <img id="cover" src="${track.thumbnail || DEFAULT_THUMB}" alt="Cover">
-    </div>
-    <div class="info">
-        <div class="track-title" id="trackTitle">${escapeHtml(track.title)}</div>
-        <div class="track-channel" id="trackChannel">${escapeHtml(track.channel)}</div>
-    </div>
-    <div class="progress-row">
-        <span class="time" id="timeCurrent">0:00</span>
-        <div class="progress" id="progressBar">
-            <div class="progress-bar" id="progressBarFill">
-                <div class="progress-thumb"></div>
-            </div>
-        </div>
-        <span class="time" id="timeTotal">0:00</span>
-    </div>
+<div class="cover-wrapper"><img id="cover" src="${track.thumbnail || DEFAULT_THUMB}"></div>
+<div class="info">
+<div class="track-title" id="trackTitle">${escapeHtml(track.title)}</div>
+<div class="track-channel" id="trackChannel">${escapeHtml(track.channel)}</div>
 </div>
-
+<div class="progress-row">
+<span class="time" id="timeCurrent">0:00</span>
+<div class="progress" id="progressBar"><div class="progress-bar" id="progressBarFill"></div></div>
+<span class="time" id="timeTotal">0:00</span>
+</div>
+</div>
 <div class="controls">
-    <button class="btn" id="prevBtn" title="Precedente"><i class="fas fa-backward-step"></i></button>
-    <button class="btn btn-play" id="playPauseBtn" title="Play/Pausa"><i class="fas fa-pause" id="playPauseIcon"></i></button>
-    <button class="btn" id="nextBtn" title="Successivo"><i class="fas fa-forward-step"></i></button>
+<button class="btn" id="prevBtn"><i class="fas fa-backward-step"></i></button>
+<button class="btn btn-play" id="playPauseBtn"><i class="fas fa-pause" id="playPauseIcon"></i></button>
+<button class="btn" id="nextBtn"><i class="fas fa-forward-step"></i></button>
 </div>
-
 <script>
-let localIsPlaying = true;
-let localCurrentTime = 0;
-let localDuration = 0;
-
+let localIsPlaying = true, localCurrentTime = 0, localDuration = 0;
 function sendCommand(command, value) {
     if (window.opener && !window.opener.closed) {
-        window.opener.postMessage({
-            type: 'popupCommand',
-            command: command,
-            value: value
-        }, '*');
+        window.opener.postMessage({ type: 'popupCommand', command, value }, '*');
     }
 }
-
-function formatTime(seconds) {
-    if (!seconds || isNaN(seconds)) return '0:00';
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return m + ':' + (s < 10 ? '0' : '') + s;
+function formatTime(s) {
+    if (!s || isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
 }
-
 window.addEventListener('message', (event) => {
     const data = event.data;
     if (!data || !data.type) return;
-
     if (data.type === 'stateUpdate') {
         const s = data.state;
-        localIsPlaying = s.isPlaying;
-        localCurrentTime = s.currentTime;
-        localDuration = s.duration;
-
-        const icon = document.getElementById('playPauseIcon');
-        icon.className = localIsPlaying ? 'fas fa-pause' : 'fas fa-play';
-
+        localIsPlaying = s.isPlaying; localCurrentTime = s.currentTime; localDuration = s.duration;
+        document.getElementById('playPauseIcon').className = localIsPlaying ? 'fas fa-pause' : 'fas fa-play';
         const percent = localDuration > 0 ? (localCurrentTime / localDuration) * 100 : 0;
         document.getElementById('progressBarFill').style.width = percent + '%';
         document.getElementById('timeCurrent').textContent = formatTime(localCurrentTime);
         document.getElementById('timeTotal').textContent = formatTime(localDuration);
-
         if (s.track) {
             document.getElementById('trackTitle').textContent = s.track.title;
             document.getElementById('trackChannel').textContent = s.track.channel;
@@ -2370,76 +2118,44 @@ window.addEventListener('message', (event) => {
         }
     }
 });
-
-document.getElementById('playPauseBtn').addEventListener('click', () => {
-    sendCommand('togglePlayPause');
-});
-
-document.getElementById('prevBtn').addEventListener('click', () => {
-    sendCommand('prev');
-});
-
-document.getElementById('nextBtn').addEventListener('click', () => {
-    sendCommand('next');
-});
-
+document.getElementById('playPauseBtn').addEventListener('click', () => sendCommand('togglePlayPause'));
+document.getElementById('prevBtn').addEventListener('click', () => sendCommand('prev'));
+document.getElementById('nextBtn').addEventListener('click', () => sendCommand('next'));
 document.getElementById('progressBar').addEventListener('click', (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
-    const newTime = percent * localDuration;
-    sendCommand('seek', newTime);
+    sendCommand('seek', percent * localDuration);
 });
-
 window.addEventListener('load', () => {
     if (window.opener && !window.opener.closed) {
         window.opener.postMessage({ type: 'popupCommand', command: 'popupReady' }, '*');
     }
 });
-
-// Aggiorna localmente la barra per fluidità visiva
-setInterval(() => {
-    if (localIsPlaying && localCurrentTime < localDuration) {
-        localCurrentTime += 0.5;
-        if (localCurrentTime > localDuration) localCurrentTime = localDuration;
-        const percent = localDuration > 0 ? (localCurrentTime / localDuration) * 100 : 0;
-        document.getElementById('progressBarFill').style.width = percent + '%';
-        document.getElementById('timeCurrent').textContent = formatTime(localCurrentTime);
-    }
-}, 500);
-<\/script>
-</body>
-</html>`;
+<\/script></body></html>`;
 
             popupPlayer.document.open();
             popupPlayer.document.write(htmlContent);
             popupPlayer.document.close();
-
             showToast('Player remoto aperto!', 'fa-external-link-alt', 'info');
-
             setTimeout(() => broadcastStateToPopup(), 500);
         };
 
         popupToggle.addEventListener('click', openPopupPlayer);
         popupBtnInPlayer.addEventListener('click', openPopupPlayer);
 
-        // ---------- PLAYLIST ----------
+        // ============================================================
+        // PLAYLIST / FAVORITI / CRONOLOGIA
+        // ============================================================
         const getPlaylist = (id) => state.playlists.find(p => p.id === id);
 
         const createPlaylist = (name, onCreated) => {
             const trimmed = (name || '').trim();
-            if (!trimmed) {
-                showToast('Inserisci un nome valido', 'fa-exclamation-triangle', 'warning');
-                return;
-            }
+            if (!trimmed) { showToast('Inserisci un nome valido', 'fa-exclamation-triangle', 'warning'); return; }
             if (state.playlists.some(p => p.name.toLowerCase() === trimmed.toLowerCase())) {
-                showToast('Esiste già una playlist con questo nome', 'fa-exclamation-triangle', 'warning');
-                return;
+                showToast('Esiste già una playlist con questo nome', 'fa-exclamation-triangle', 'warning'); return;
             }
             const colors = PLAYLIST_COLORS[state.playlists.length % PLAYLIST_COLORS.length];
-            const playlist = {
-                id: uid(), name: trimmed, tracks: [],
-                color1: colors[0], color2: colors[1], createdAt: Date.now()
-            };
+            const playlist = { id: uid(), name: trimmed, tracks: [], color1: colors[0], color2: colors[1], createdAt: Date.now() };
             state.playlists.push(playlist);
             saveStorage();
             renderPlaylistMiniList();
@@ -2450,9 +2166,7 @@ setInterval(() => {
         const deletePlaylist = (id) => {
             const pl = getPlaylist(id);
             if (!pl) return;
-            openModal(
-                'Eliminare la playlist?',
-                `La playlist "${pl.name}" e tutti i suoi ${pl.tracks.length} brani verranno eliminati definitivamente.`,
+            openModal('Eliminare la playlist?', `La playlist "${pl.name}" e i suoi ${pl.tracks.length} brani verranno eliminati.`,
                 () => {
                     state.playlists = state.playlists.filter(p => p.id !== id);
                     saveStorage();
@@ -2460,16 +2174,14 @@ setInterval(() => {
                     if (state.view === 'playlist-detail' && state.currentPlaylistId === id) renderPlaylists();
                     else if (state.view === 'playlists') renderPlaylists();
                     showToast('Playlist eliminata', 'fa-trash', 'warning');
-                }
-            );
+                });
         };
 
         const addTrackToPlaylist = (track, playlistId) => {
             const pl = getPlaylist(playlistId);
             if (!pl) return;
             if (pl.tracks.some(t => t.videoId === track.videoId)) {
-                showToast('Brano già presente nella playlist', 'fa-info-circle', 'warning');
-                return;
+                showToast('Brano già presente', 'fa-info-circle', 'warning'); return;
             }
             pl.tracks.push({ ...track, addedAt: Date.now() });
             saveStorage();
@@ -2483,10 +2195,8 @@ setInterval(() => {
             pl.tracks = pl.tracks.filter(t => t.videoId !== videoId);
             saveStorage();
             renderPlaylistMiniList();
-            if (state.view === 'playlist-detail' && state.currentPlaylistId === playlistId) {
-                renderPlaylistDetail(playlistId);
-            }
-            showToast('Brano rimosso dalla playlist', 'fa-trash', 'warning');
+            if (state.view === 'playlist-detail' && state.currentPlaylistId === playlistId) renderPlaylistDetail(playlistId);
+            showToast('Brano rimosso', 'fa-trash', 'warning');
         };
 
         const openAddToPlaylistModal = (track) => {
@@ -2496,29 +2206,24 @@ setInterval(() => {
                     { confirmText: 'Crea playlist', confirmClass: 'primary' });
                 return;
             }
-
             const optionsHtml = state.playlists.map(p => {
                 const already = p.tracks.some(t => t.videoId === track.videoId);
                 return `<option value="${p.id}" ${already ? 'disabled' : ''}>${escapeHtml(p.name)} ${already ? '(già presente)' : `(${p.tracks.length})`}</option>`;
             }).join('');
-
             modalTitle.textContent = 'Aggiungi a playlist';
-            modalMessage.textContent = `Scegli in quale playlist inserire "${track.title}"`;
+            modalMessage.textContent = `Scegli dove inserire "${track.title}"`;
             modalExtra.innerHTML = `
                 <select id="playlistSelect">${optionsHtml}</select>
                 <button class="modal-btn primary" id="quickCreateBtn" style="width:100%;margin-bottom:8px;">
                     <i class="fas fa-plus"></i> Crea nuova playlist
-                </button>
-            `;
+                </button>`;
             modalConfirm.textContent = 'Aggiungi';
             modalConfirm.className = 'modal-btn primary';
             modalOverlay.classList.add('visible');
-
             document.getElementById('quickCreateBtn').addEventListener('click', () => {
                 closeModal();
                 openCreatePlaylistModal((newPl) => addTrackToPlaylist(track, newPl.id));
             });
-
             modalCallback = () => {
                 const sel = document.getElementById('playlistSelect');
                 if (sel && sel.value) addTrackToPlaylist(track, sel.value);
@@ -2532,12 +2237,7 @@ setInterval(() => {
             modalConfirm.textContent = 'Crea';
             modalConfirm.className = 'modal-btn primary';
             modalOverlay.classList.add('visible');
-
-            setTimeout(() => {
-                const inp = document.getElementById('newPlaylistName');
-                if (inp) inp.focus();
-            }, 100);
-
+            setTimeout(() => { const inp = document.getElementById('newPlaylistName'); if (inp) inp.focus(); }, 100);
             modalCallback = () => {
                 const inp = document.getElementById('newPlaylistName');
                 if (inp) createPlaylist(inp.value, onCreated);
@@ -2545,15 +2245,13 @@ setInterval(() => {
         };
 
         const downloadTrack = (track) => {
-            openModal(
-                'Download del brano',
-                `Per scaricare "${track.title}" verrai reindirizzato su YouTube dove potrai usare la funzione di download ufficiale (se disponibile) o un servizio di terze parti. Vuoi continuare?`,
+            openModal('Download del brano',
+                `Per scaricare "${track.title}" verrai reindirizzato su YouTube. Vuoi continuare?`,
                 () => {
                     window.open(`https://www.youtube.com/watch?v=${track.videoId}`, '_blank', 'noopener,noreferrer');
-                    showToast('Apro YouTube per il download...', 'fa-download', 'info');
+                    showToast('Apro YouTube...', 'fa-download', 'info');
                 },
-                { confirmText: 'Apri YouTube', confirmClass: 'primary' }
-            );
+                { confirmText: 'Apri YouTube', confirmClass: 'primary' });
         };
 
         const isFavorite = (videoId) => state.favorites.some(f => f.videoId === videoId);
@@ -2586,19 +2284,18 @@ setInterval(() => {
             saveStorage();
             renderFavorites();
             updateFavButtonUI();
-            showToast('Rimosso dai preferiti', 'fa-trash', 'warning');
+            showToast('Rimosso', 'fa-trash', 'warning');
         };
 
         const removeFromHistory = (videoId) => {
             state.history = state.history.filter(h => h.videoId !== videoId);
             saveStorage();
             renderHistory();
-            showToast('Rimosso dai recenti', 'fa-trash', 'warning');
+            showToast('Rimosso', 'fa-trash', 'warning');
         };
 
         const clearFavorites = () => {
-            openModal('Svuotare i preferiti?',
-                `Verranno eliminati tutti i ${state.favorites.length} brani dai preferiti.`,
+            openModal('Svuotare i preferiti?', `Verranno eliminati ${state.favorites.length} brani.`,
                 () => {
                     state.favorites = [];
                     saveStorage();
@@ -2609,8 +2306,7 @@ setInterval(() => {
         };
 
         const clearHistory = () => {
-            openModal('Svuotare i recenti?',
-                `Verranno eliminati tutti i ${state.history.length} brani dalla cronologia.`,
+            openModal('Svuotare i recenti?', `Verranno eliminati ${state.history.length} brani.`,
                 () => {
                     state.history = [];
                     saveStorage();
@@ -2619,40 +2315,24 @@ setInterval(() => {
                 });
         };
 
+        // ============================================================
+        // RENDER
+        // ============================================================
         const renderCards = (items, container, options = {}) => {
             if (!items || items.length === 0) {
-                container.innerHTML = `
-                    <div class="status-message">
-                        <i class="fas fa-search"></i>
-                        <h2>Nessun risultato</h2>
-                        <p>Prova con un altro termine di ricerca.</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="status-message"><i class="fas fa-search"></i><h2>Nessun risultato</h2></div>`;
                 return;
             }
-
             container.innerHTML = items.map((item, idx) => {
                 const fav = isFavorite(item.videoId);
                 return `
                     <div class="card" data-videoid="${item.videoId}" data-index="${idx}">
                         <div class="card-actions">
-                            <button class="card-action-btn add-btn" data-action="add" title="Aggiungi a playlist">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <button class="card-action-btn pip-btn" data-action="pip" title="Riproduci in finestra separata">
-                                <i class="fas fa-external-link-alt"></i>
-                            </button>
-                            <button class="card-action-btn" data-action="download" title="Download">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="card-action-btn ${fav ? 'active' : ''}" data-action="fav" title="${fav ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            ${options.showDelete ? `
-                                <button class="card-action-btn delete-btn" data-action="delete" title="Elimina">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            ` : ''}
+                            <button class="card-action-btn add-btn" data-action="add" title="Aggiungi a playlist"><i class="fas fa-plus"></i></button>
+                            <button class="card-action-btn pip-btn" data-action="pip" title="Riproduci in finestra separata"><i class="fas fa-external-link-alt"></i></button>
+                            <button class="card-action-btn" data-action="download" title="Download"><i class="fas fa-download"></i></button>
+                            <button class="card-action-btn ${fav ? 'active' : ''}" data-action="fav" title="Preferiti"><i class="fas fa-heart"></i></button>
+                            ${options.showDelete ? `<button class="card-action-btn delete-btn" data-action="delete" title="Elimina"><i class="fas fa-trash"></i></button>` : ''}
                         </div>
                         <div class="card-img-wrapper">
                             <img class="card-img" src="${item.thumbnail}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='${DEFAULT_THUMB}'">
@@ -2660,45 +2340,29 @@ setInterval(() => {
                         </div>
                         <div class="card-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</div>
                         <div class="card-channel" title="${escapeHtml(item.channel)}">${escapeHtml(item.channel)}</div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
 
             container.querySelectorAll('.card').forEach(card => {
                 const videoId = card.dataset.videoid;
                 const track = items.find(i => i.videoId === videoId);
                 if (!track) return;
-
                 card.addEventListener('click', (e) => {
                     if (e.target.closest('[data-action]')) return;
                     playTrack(track, items, items.indexOf(track));
                 });
-
                 const favBtn = card.querySelector('[data-action="fav"]');
-                if (favBtn) favBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleFavorite(track);
-                });
-
+                if (favBtn) favBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFavorite(track); });
                 const addBtn = card.querySelector('[data-action="add"]');
-                if (addBtn) addBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openAddToPlaylistModal(track);
-                });
-
+                if (addBtn) addBtn.addEventListener('click', (e) => { e.stopPropagation(); openAddToPlaylistModal(track); });
                 const pipBtn = card.querySelector('[data-action="pip"]');
                 if (pipBtn) pipBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     playTrack(track, items, items.indexOf(track));
-                    setTimeout(() => openPopupPlayer(), 500);
+                    setTimeout(() => openPopupPlayer(), 400);
                 });
-
                 const dlBtn = card.querySelector('[data-action="download"]');
-                if (dlBtn) dlBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    downloadTrack(track);
-                });
-
+                if (dlBtn) dlBtn.addEventListener('click', (e) => { e.stopPropagation(); downloadTrack(track); });
                 const delBtn = card.querySelector('[data-action="delete"]');
                 if (delBtn) delBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -2708,18 +2372,13 @@ setInterval(() => {
         };
 
         const renderPlaylistMiniList = () => {
-            if (state.playlists.length === 0) {
-                playlistMiniList.innerHTML = '';
-                return;
-            }
+            if (state.playlists.length === 0) { playlistMiniList.innerHTML = ''; return; }
             playlistMiniList.innerHTML = state.playlists.map(pl => `
                 <div class="playlist-mini-item ${state.currentPlaylistId === pl.id && state.view === 'playlist-detail' ? 'active' : ''}" data-plid="${pl.id}">
                     <i class="fas fa-list"></i>
                     <span title="${escapeHtml(pl.name)}">${escapeHtml(pl.name)}</span>
                     <span class="mini-count">${pl.tracks.length}</span>
-                </div>
-            `).join('');
-
+                </div>`).join('');
             playlistMiniList.querySelectorAll('.playlist-mini-item').forEach(el => {
                 el.addEventListener('click', () => renderPlaylistDetail(el.dataset.plid));
             });
@@ -2738,40 +2397,30 @@ setInterval(() => {
                     </div>
                 </div>
                 <div class="section-header"><h2>Suggerimenti per te</h2></div>
-                <div class="results-grid" id="suggestGrid"></div>
-            `;
+                <div class="results-grid" id="suggestGrid"></div>`;
             loadSuggestions();
         };
 
         const loadSuggestions = async () => {
             const grid = document.getElementById('suggestGrid');
             if (!grid) return;
-
             const artists = ['Sfera Ebbasta', 'Måneskin', 'Marracash', 'Lazza', 'Elisa', 'Vasco Rossi', 'Pinguini Tattici Nucleari', 'Blanco', 'Laura Pausini', 'Eminem', 'Coldplay', 'Ed Sheeran'];
             const randomArtist = artists[Math.floor(Math.random() * artists.length)];
-
-            grid.innerHTML = `<div class="status-message"><i class="fas fa-spinner spinner"></i><p>Caricamento suggerimenti...</p></div>`;
-
+            grid.innerHTML = `<div class="status-message"><i class="fas fa-spinner spinner"></i><p>Caricamento...</p></div>`;
             try {
                 const url = `${YT_API}/search?part=snippet&maxResults=8&q=${encodeURIComponent(randomArtist)}&type=video&videoCategoryId=10&key=${API_KEY}`;
                 const res = await fetch(url);
                 if (!res.ok) throw new Error('Errore');
                 const data = await res.json();
-
                 const items = (data.items || []).filter(i => i.id?.videoId).map(item => ({
-                    videoId: item.id.videoId,
-                    title: item.snippet.title || 'Senza titolo',
+                    videoId: item.id.videoId, title: item.snippet.title || 'Senza titolo',
                     channel: item.snippet.channelTitle || 'Canale sconosciuto',
                     thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || item.snippet.thumbnails?.default?.url || DEFAULT_THUMB
                 }));
-
-                if (items.length === 0) {
-                    grid.innerHTML = `<div class="status-message"><i class="fas fa-music"></i><p>Cerca qualcosa per iniziare!</p></div>`;
-                    return;
-                }
+                if (items.length === 0) { grid.innerHTML = `<div class="status-message"><i class="fas fa-music"></i><p>Cerca qualcosa!</p></div>`; return; }
                 renderCards(items, grid);
             } catch (err) {
-                grid.innerHTML = `<div class="status-message"><i class="fas fa-music" style="color:var(--accent);"></i><h2>Cerca la tua musica</h2><p>Usa la barra in alto per iniziare.</p></div>`;
+                grid.innerHTML = `<div class="status-message"><i class="fas fa-music" style="color:var(--accent);"></i><h2>Cerca la tua musica</h2></div>`;
             }
         };
 
@@ -2786,8 +2435,7 @@ setInterval(() => {
                     </div>
                 </div>
                 <div class="section-header"><h2>Brani e video</h2><span class="badge">${state.results.length}</span></div>
-                <div class="results-grid" id="resultsGrid"></div>
-            `;
+                <div class="results-grid" id="resultsGrid"></div>`;
             renderCards(state.results, document.getElementById('resultsGrid'));
         };
 
@@ -2795,7 +2443,6 @@ setInterval(() => {
             state.view = 'favorites';
             updateActiveSidebar();
             renderPlaylistMiniList();
-
             if (state.favorites.length === 0) {
                 contentArea.innerHTML = `
                     <div class="content-header">
@@ -2806,22 +2453,16 @@ setInterval(() => {
                             <div class="content-header-meta"><span>0 brani</span></div>
                         </div>
                     </div>
-                    <div class="status-message">
-                        <i class="fas fa-heart" style="color:var(--text-muted);"></i>
-                        <h2>Nessun preferito</h2>
-                        <p>Clicca sul cuore di un brano per aggiungerlo qui.</p>
-                    </div>
-                `;
+                    <div class="status-message"><i class="fas fa-heart"></i><h2>Nessun preferito</h2></div>`;
                 return;
             }
-
             contentArea.innerHTML = `
                 <div class="content-header">
                     <div class="content-header-icon" style="background:linear-gradient(135deg,#ff6b8a,#c9184a);"><i class="fas fa-heart"></i></div>
                     <div class="content-header-info">
                         <div class="content-header-type">La tua raccolta</div>
                         <div class="content-header-title">Preferiti</div>
-                        <div class="content-header-meta"><span>${state.favorites.length} brani salvati</span></div>
+                        <div class="content-header-meta"><span>${state.favorites.length} brani</span></div>
                     </div>
                 </div>
                 <div class="header-actions">
@@ -2830,14 +2471,11 @@ setInterval(() => {
                     <button class="btn-clear" id="clearFavBtn"><i class="fas fa-trash"></i> Svuota preferiti</button>
                 </div>
                 <div class="section-header"><h2>Tutti i brani</h2><span class="badge">${state.favorites.length}</span></div>
-                <div class="results-grid" id="favGrid"></div>
-            `;
-
+                <div class="results-grid" id="favGrid"></div>`;
             renderCards(state.favorites, document.getElementById('favGrid'), {
                 showDelete: true,
                 onDelete: (track) => removeFromFavorites(track.videoId)
             });
-
             document.getElementById('playAllFav').addEventListener('click', () => playTrack(state.favorites[0], state.favorites, 0));
             document.getElementById('shuffleFav').addEventListener('click', () => {
                 const idx = Math.floor(Math.random() * state.favorites.length);
@@ -2850,43 +2488,33 @@ setInterval(() => {
             state.view = 'history';
             updateActiveSidebar();
             renderPlaylistMiniList();
-
             if (state.history.length === 0) {
                 contentArea.innerHTML = `
                     <div class="content-header">
                         <div class="content-header-icon" style="background:linear-gradient(135deg,#4ea8de,#1e6091);"><i class="fas fa-clock"></i></div>
                         <div class="content-header-info">
                             <div class="content-header-type">La tua raccolta</div>
-                            <div class="content-header-title">Ascoltati di recente</div>
+                            <div class="content-header-title">Recenti</div>
                             <div class="content-header-meta"><span>0 brani</span></div>
                         </div>
                     </div>
-                    <div class="status-message">
-                        <i class="fas fa-clock" style="color:var(--text-muted);"></i>
-                        <h2>Nessun brano ascoltato</h2>
-                        <p>I brani che riproduci appariranno qui.</p>
-                    </div>
-                `;
+                    <div class="status-message"><i class="fas fa-clock"></i><h2>Nessun brano</h2></div>`;
                 return;
             }
-
             contentArea.innerHTML = `
                 <div class="content-header">
                     <div class="content-header-icon" style="background:linear-gradient(135deg,#4ea8de,#1e6091);"><i class="fas fa-clock"></i></div>
                     <div class="content-header-info">
                         <div class="content-header-type">La tua raccolta</div>
-                        <div class="content-header-title">Ascoltati di recente</div>
-                        <div class="content-header-meta"><span>${state.history.length} brani nella cronologia</span></div>
+                        <div class="content-header-title">Recenti</div>
+                        <div class="content-header-meta"><span>${state.history.length} brani</span></div>
                     </div>
                 </div>
                 <div class="header-actions">
                     <button class="btn-play-big" id="playAllHist"><i class="fas fa-play"></i></button>
                     <button class="btn-clear" id="clearHistBtn"><i class="fas fa-trash"></i> Svuota recenti</button>
                 </div>
-                <div class="section-header"><h2>Brani recenti</h2><span class="badge">${state.history.length}</span></div>
-                <div class="tracks-list" id="historyList"></div>
-            `;
-
+                <div class="tracks-list" id="historyList"></div>`;
             const list = document.getElementById('historyList');
             list.innerHTML = state.history.map((t, i) => {
                 const fav = isFavorite(t.videoId);
@@ -2901,52 +2529,33 @@ setInterval(() => {
                         </div>
                         <div class="track-date">${dateStr}</div>
                         <div class="track-actions">
-                            <button class="track-action-btn" data-action="add" title="Aggiungi a playlist">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <button class="track-action-btn" data-action="download" title="Download">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="track-action-btn ${fav ? 'active' : ''}" data-action="fav" title="Preferiti">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="track-action-btn delete-btn" data-action="delete" title="Elimina">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button class="track-action-btn" data-action="add"><i class="fas fa-plus"></i></button>
+                            <button class="track-action-btn" data-action="download"><i class="fas fa-download"></i></button>
+                            <button class="track-action-btn ${fav ? 'active' : ''}" data-action="fav"><i class="fas fa-heart"></i></button>
+                            <button class="track-action-btn delete-btn" data-action="delete"><i class="fas fa-trash"></i></button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
 
             list.querySelectorAll('.track-row').forEach(row => {
                 const videoId = row.dataset.videoid;
                 const track = state.history.find(t => t.videoId === videoId);
                 const idx = state.history.indexOf(track);
-
                 row.addEventListener('click', (e) => {
                     if (e.target.closest('[data-action]')) return;
                     playTrack(track, state.history, idx);
                 });
-
                 row.querySelector('[data-action="fav"]').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleFavorite(track);
-                    renderHistory();
+                    e.stopPropagation(); toggleFavorite(track); renderHistory();
                 });
-
                 row.querySelector('[data-action="add"]').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openAddToPlaylistModal(track);
+                    e.stopPropagation(); openAddToPlaylistModal(track);
                 });
-
                 row.querySelector('[data-action="download"]').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    downloadTrack(track);
+                    e.stopPropagation(); downloadTrack(track);
                 });
-
                 row.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    removeFromHistory(videoId);
+                    e.stopPropagation(); removeFromHistory(videoId);
                 });
             });
 
@@ -2959,7 +2568,6 @@ setInterval(() => {
             state.currentPlaylistId = null;
             updateActiveSidebar();
             renderPlaylistMiniList();
-
             contentArea.innerHTML = `
                 <div class="content-header">
                     <div class="content-header-icon" style="background:linear-gradient(135deg,#a855f7,#6b21a8);"><i class="fas fa-list"></i></div>
@@ -2970,18 +2578,9 @@ setInterval(() => {
                     </div>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-primary" id="createPlaylistBtn">
-                        <i class="fas fa-plus"></i> Nuova playlist
-                    </button>
+                    <button class="btn-primary" id="createPlaylistBtn"><i class="fas fa-plus"></i> Nuova playlist</button>
                 </div>
-                ${state.playlists.length === 0 ? `
-                    <div class="status-message">
-                        <i class="fas fa-list" style="color:var(--text-muted);"></i>
-                        <h2>Nessuna playlist creata</h2>
-                        <p>Crea la tua prima playlist per organizzare la musica che ami.</p>
-                    </div>
-                ` : `<div class="playlist-grid" id="playlistsGrid"></div>`}
-            `;
+                ${state.playlists.length === 0 ? `<div class="status-message"><i class="fas fa-list"></i><h2>Nessuna playlist</h2></div>` : `<div class="playlist-grid" id="playlistsGrid"></div>`}`;
 
             document.getElementById('createPlaylistBtn').addEventListener('click', () => {
                 openCreatePlaylistModal(() => renderPlaylists());
@@ -2991,17 +2590,11 @@ setInterval(() => {
                 const grid = document.getElementById('playlistsGrid');
                 grid.innerHTML = state.playlists.map(pl => `
                     <div class="playlist-card" data-plid="${pl.id}">
-                        <button class="playlist-delete" data-action="delete" title="Elimina playlist">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <div class="playlist-cover" style="background:linear-gradient(135deg,${pl.color1},${pl.color2});">
-                            <i class="fas fa-music"></i>
-                        </div>
-                        <div class="playlist-name" title="${escapeHtml(pl.name)}">${escapeHtml(pl.name)}</div>
+                        <button class="playlist-delete" data-action="delete"><i class="fas fa-trash"></i></button>
+                        <div class="playlist-cover" style="background:linear-gradient(135deg,${pl.color1},${pl.color2});"><i class="fas fa-music"></i></div>
+                        <div class="playlist-name">${escapeHtml(pl.name)}</div>
                         <div class="playlist-count">${pl.tracks.length} brani</div>
-                    </div>
-                `).join('');
-
+                    </div>`).join('');
                 grid.querySelectorAll('.playlist-card').forEach(card => {
                     const plid = card.dataset.plid;
                     card.addEventListener('click', (e) => {
@@ -3009,8 +2602,7 @@ setInterval(() => {
                         renderPlaylistDetail(plid);
                     });
                     card.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        deletePlaylist(plid);
+                        e.stopPropagation(); deletePlaylist(plid);
                     });
                 });
             }
@@ -3023,18 +2615,13 @@ setInterval(() => {
             state.currentPlaylistId = playlistId;
             updateActiveSidebar();
             renderPlaylistMiniList();
-
             contentArea.innerHTML = `
                 <div class="content-header">
                     <div class="content-header-icon" style="background:linear-gradient(135deg,${pl.color1},${pl.color2});"><i class="fas fa-music"></i></div>
                     <div class="content-header-info">
                         <div class="content-header-type">Playlist</div>
                         <div class="content-header-title">${escapeHtml(pl.name)}</div>
-                        <div class="content-header-meta">
-                            <span>${pl.tracks.length} brani</span>
-                            <span>•</span>
-                            <span>Creata il ${new Date(pl.createdAt).toLocaleDateString('it-IT')}</span>
-                        </div>
+                        <div class="content-header-meta"><span>${pl.tracks.length} brani</span></div>
                     </div>
                 </div>
                 <div class="header-actions">
@@ -3042,18 +2629,9 @@ setInterval(() => {
                         <button class="btn-play-big" id="playAllPl"><i class="fas fa-play"></i></button>
                         <button class="btn-icon-outline" id="shufflePl"><i class="fas fa-shuffle"></i></button>
                     ` : ''}
-                    <button class="btn-clear" id="deletePlBtn" style="margin-left:auto;">
-                        <i class="fas fa-trash"></i> Elimina playlist
-                    </button>
+                    <button class="btn-clear" id="deletePlBtn" style="margin-left:auto;"><i class="fas fa-trash"></i> Elimina playlist</button>
                 </div>
-                ${pl.tracks.length === 0 ? `
-                    <div class="status-message">
-                        <i class="fas fa-music" style="color:var(--text-muted);"></i>
-                        <h2>Playlist vuota</h2>
-                        <p>Aggiungi brani usando il pulsante <b>+</b> su ogni card o dalla cronologia.</p>
-                    </div>
-                ` : `<div class="tracks-list" id="plTrackList"></div>`}
-            `;
+                ${pl.tracks.length === 0 ? `<div class="status-message"><i class="fas fa-music"></i><h2>Playlist vuota</h2></div>` : `<div class="tracks-list" id="plTrackList"></div>`}`;
 
             document.getElementById('deletePlBtn').addEventListener('click', () => deletePlaylist(playlistId));
 
@@ -3070,45 +2648,30 @@ setInterval(() => {
                             </div>
                             <div class="track-date">${new Date(t.addedAt || Date.now()).toLocaleDateString('it-IT', {day:'2-digit',month:'short'})}</div>
                             <div class="track-actions">
-                                <button class="track-action-btn" data-action="download" title="Download"><i class="fas fa-download"></i></button>
-                                <button class="track-action-btn ${fav ? 'active' : ''}" data-action="fav" title="Preferiti">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                                <button class="track-action-btn delete-btn" data-action="delete" title="Rimuovi dalla playlist">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <button class="track-action-btn" data-action="download"><i class="fas fa-download"></i></button>
+                                <button class="track-action-btn ${fav ? 'active' : ''}" data-action="fav"><i class="fas fa-heart"></i></button>
+                                <button class="track-action-btn delete-btn" data-action="delete"><i class="fas fa-trash"></i></button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }).join('');
-
                 list.querySelectorAll('.track-row').forEach(row => {
                     const videoId = row.dataset.videoid;
                     const track = pl.tracks.find(t => t.videoId === videoId);
                     const idx = pl.tracks.indexOf(track);
-
                     row.addEventListener('click', (e) => {
                         if (e.target.closest('[data-action]')) return;
                         playTrack(track, pl.tracks, idx);
                     });
-
                     row.querySelector('[data-action="fav"]').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        toggleFavorite(track);
-                        renderPlaylistDetail(playlistId);
+                        e.stopPropagation(); toggleFavorite(track); renderPlaylistDetail(playlistId);
                     });
-
                     row.querySelector('[data-action="download"]').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        downloadTrack(track);
+                        e.stopPropagation(); downloadTrack(track);
                     });
-
                     row.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        removeTrackFromPlaylist(playlistId, videoId);
+                        e.stopPropagation(); removeTrackFromPlaylist(playlistId, videoId);
                     });
                 });
-
                 document.getElementById('playAllPl').addEventListener('click', () => playTrack(pl.tracks[0], pl.tracks, 0));
                 document.getElementById('shufflePl').addEventListener('click', () => {
                     const idx = Math.floor(Math.random() * pl.tracks.length);
@@ -3130,8 +2693,7 @@ setInterval(() => {
                     </div>
                 </div>
                 <div class="section-header"><h2>${escapeHtml(state.categoryTitle)}</h2><span class="badge">${state.results.length}</span></div>
-                <div class="results-grid" id="resultsGrid"></div>
-            `;
+                <div class="results-grid" id="resultsGrid"></div>`;
             renderCards(state.results, document.getElementById('resultsGrid'));
         };
 
@@ -3140,7 +2702,6 @@ setInterval(() => {
             state.categoryKey = config.view;
             updateActiveSidebar();
             renderPlaylistMiniList();
-
             contentArea.innerHTML = `
                 <div class="content-header">
                     <div class="content-header-icon" style="background:linear-gradient(135deg,${config.color1},${config.color2});"><i class="fas ${config.icon}"></i></div>
@@ -3149,44 +2710,25 @@ setInterval(() => {
                         <div class="content-header-title">${escapeHtml(config.title)}</div>
                     </div>
                 </div>
-                <div class="status-message"><i class="fas fa-spinner spinner"></i><p>Caricamento...</p></div>
-            `;
-
+                <div class="status-message"><i class="fas fa-spinner spinner"></i><p>Caricamento...</p></div>`;
             try {
                 const url = `${YT_API}/search?part=snippet&maxResults=${MAX_RESULTS}&q=${encodeURIComponent(config.query)}&type=video&key=${API_KEY}`;
                 const res = await fetch(url);
-                if (!res.ok) throw new Error('Errore nel caricamento');
+                if (!res.ok) throw new Error('Errore');
                 const data = await res.json();
-
                 state.results = (data.items || []).filter(i => i.id?.videoId).map(item => ({
-                    videoId: item.id.videoId,
-                    title: item.snippet.title || 'Senza titolo',
+                    videoId: item.id.videoId, title: item.snippet.title || 'Senza titolo',
                     channel: item.snippet.channelTitle || 'Canale sconosciuto',
                     thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || item.snippet.thumbnails?.default?.url || DEFAULT_THUMB
                 }));
-
                 state.categoryIcon = config.icon;
                 state.categoryColor1 = config.color1;
                 state.categoryColor2 = config.color2;
                 state.categoryTitle = config.title;
                 state.categoryType = config.type;
-
                 renderCategoryResults();
             } catch (err) {
-                contentArea.innerHTML = `
-                    <div class="content-header">
-                        <div class="content-header-icon" style="background:linear-gradient(135deg,${config.color1},${config.color2});"><i class="fas ${config.icon}"></i></div>
-                        <div class="content-header-info">
-                            <div class="content-header-type">${escapeHtml(config.type)}</div>
-                            <div class="content-header-title">${escapeHtml(config.title)}</div>
-                        </div>
-                    </div>
-                    <div class="status-message">
-                        <i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i>
-                        <h2>Errore nel caricamento</h2>
-                        <p>${escapeHtml(err.message)}</p>
-                    </div>
-                `;
+                contentArea.innerHTML = `<div class="status-message"><i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i><h2>Errore</h2><p>${escapeHtml(err.message)}</p></div>`;
             }
         };
 
@@ -3203,43 +2745,23 @@ setInterval(() => {
                         <div class="content-header-title">"${escapeHtml(query)}"</div>
                     </div>
                 </div>
-                <div class="status-message"><i class="fas fa-spinner spinner"></i><p>Ricerca in corso...</p></div>
-            `;
-
+                <div class="status-message"><i class="fas fa-spinner spinner"></i><p>Ricerca...</p></div>`;
             try {
                 const url = `${YT_API}/search?part=snippet&maxResults=${MAX_RESULTS}&q=${encodeURIComponent(query)}&type=video&key=${API_KEY}`;
                 const res = await fetch(url);
                 if (!res.ok) {
                     const err = await res.json().catch(() => ({}));
-                    throw new Error(err.error?.message || 'Errore ricerca');
+                    throw new Error(err.error?.message || 'Errore');
                 }
                 const data = await res.json();
                 state.results = (data.items || []).filter(i => i.id?.videoId).map(item => ({
-                    videoId: item.id.videoId,
-                    title: item.snippet.title || 'Senza titolo',
+                    videoId: item.id.videoId, title: item.snippet.title || 'Senza titolo',
                     channel: item.snippet.channelTitle || 'Canale sconosciuto',
-                    thumbnail: item.snippet.thumbnails?.high?.url
-                             || item.snippet.thumbnails?.medium?.url
-                             || item.snippet.thumbnails?.default?.url
-                             || DEFAULT_THUMB
+                    thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || item.snippet.thumbnails?.default?.url || DEFAULT_THUMB
                 }));
                 renderSearchResults();
             } catch (err) {
-                console.error(err);
-                contentArea.innerHTML = `
-                    <div class="content-header">
-                        <div class="content-header-icon" style="background:linear-gradient(135deg,#ff6b6b,#c9184a);"><i class="fas fa-exclamation-triangle"></i></div>
-                        <div class="content-header-info">
-                            <div class="content-header-type">Errore</div>
-                            <div class="content-header-title">Ricerca non riuscita</div>
-                        </div>
-                    </div>
-                    <div class="status-message">
-                        <i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i>
-                        <h2>${escapeHtml(err.message)}</h2>
-                        <p>Controlla la connessione o riprova più tardi.</p>
-                    </div>
-                `;
+                contentArea.innerHTML = `<div class="status-message"><i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i><h2>${escapeHtml(err.message)}</h2></div>`;
             }
         };
 
@@ -3285,14 +2807,12 @@ setInterval(() => {
         });
 
         let searchDebounce = null;
-
         searchInput.addEventListener('input', () => {
             clearTimeout(searchDebounce);
             const q = searchInput.value.trim();
             if (q.length === 0) { showHome(); return; }
             searchDebounce = setTimeout(() => performSearch(q), 500);
         });
-
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -3304,10 +2824,7 @@ setInterval(() => {
 
         document.addEventListener('keydown', (e) => {
             if (e.target.matches('input, textarea, select')) return;
-            if (e.code === 'Space') {
-                e.preventDefault();
-                togglePlayPause();
-            }
+            if (e.code === 'Space') { e.preventDefault(); togglePlayPause(); }
         });
 
         const init = () => {
@@ -3318,6 +2835,7 @@ setInterval(() => {
             renderPlaylistMiniList();
             applyVolume();
             renderHome();
+            console.log('🚀 Spotube avviato');
         };
 
         return { init, showHome, playTrack };
