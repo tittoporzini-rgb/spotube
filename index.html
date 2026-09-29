@@ -312,12 +312,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
-        }
-
-        .sidebar-item .new-playlist-btn:hover {
-            transform: scale(1.15);
-            background: var(--accent-hover);
         }
 
         .playlist-mini-list {
@@ -377,7 +371,6 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             z-index: 94;
             opacity: 0;
             transition: opacity 0.3s;
@@ -474,7 +467,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
             box-shadow: 0 8px 20px -4px rgba(30, 215, 96, 0.5);
             flex-shrink: 0;
         }
@@ -490,7 +482,6 @@
             color: var(--text-secondary);
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.15s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -511,10 +502,9 @@
             border-radius: 30px;
             border: none;
             cursor: pointer;
-            transition: all 0.15s;
         }
 
-        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-primary:hover { background: var(--accent-hover); }
 
         .btn-clear {
             display: flex;
@@ -528,7 +518,6 @@
             padding: 10px 16px;
             border-radius: 30px;
             cursor: pointer;
-            transition: all 0.15s;
             margin-left: auto;
         }
 
@@ -662,7 +651,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
             backdrop-filter: blur(4px);
         }
 
@@ -688,10 +676,8 @@
 
         .track-row:hover { background: var(--bg-hover); }
         .track-row:hover .track-actions { opacity: 1; }
-        .track-row.playing { color: var(--accent); }
 
         .track-number { color: var(--text-muted); font-size: 0.9rem; text-align: center; }
-        .track-row.playing .track-number { color: var(--accent); }
 
         .track-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 
@@ -734,7 +720,6 @@
             font-size: 0.9rem;
             padding: 6px;
             border-radius: 50%;
-            transition: all 0.15s;
             width: 32px;
             height: 32px;
         }
@@ -765,6 +750,7 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ============ PLAYER INFERIORE ============ */
         .player-bar {
             background: var(--bg-player);
             border-top: 1px solid var(--border);
@@ -789,11 +775,6 @@
 
         .player-progress:hover { height: 9px; }
 
-        .player-progress:hover .player-progress-thumb {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
         .player-progress-bar {
             height: 100%;
             background: var(--accent);
@@ -812,10 +793,13 @@
             height: 14px;
             border-radius: 50%;
             background: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
             opacity: 0;
-            transition: opacity 0.15s, transform 0.15s;
             pointer-events: none;
+        }
+
+        .player-progress:hover .player-progress-thumb {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .player-body {
@@ -852,7 +836,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s;
         }
 
         .player-track-text {
@@ -870,7 +853,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: var(--text-primary);
         }
 
         .player-track-channel {
@@ -893,11 +875,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
             flex-shrink: 0;
         }
 
-        .player-fav-btn:hover { color: var(--text-primary); transform: scale(1.15); }
+        .player-fav-btn:hover { color: var(--text-primary); }
         .player-fav-btn.active { color: var(--accent); }
 
         .player-controls {
@@ -927,14 +908,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
-            position: relative;
         }
 
         .player-btn:hover {
             color: var(--text-primary);
             background: var(--bg-hover);
-            transform: scale(1.08);
         }
 
         .player-btn.active { color: var(--accent); }
@@ -951,13 +929,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
             flex-shrink: 0;
         }
 
         .player-btn-play:hover {
             transform: scale(1.08);
-            box-shadow: 0 4px 12px var(--shadow);
         }
 
         .player-time {
@@ -1006,7 +982,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
         }
 
         .player-volume-btn:hover { color: var(--text-primary); }
@@ -1025,30 +1000,250 @@
             background: var(--text-primary);
             border-radius: 2px;
             width: 100%;
-            transition: background 0.15s;
         }
 
         .player-volume-slider:hover .player-volume-level {
             background: var(--accent);
         }
 
-        .player-volume-thumb {
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            transition: opacity 0.15s, transform 0.15s;
-            pointer-events: none;
+        /* ============ FLOATING PLAYER (SOSTITUISCE IL POPUP) ============ */
+        .floating-player {
+            position: fixed;
+            bottom: 120px;
+            right: 20px;
+            width: 340px;
+            max-width: calc(100vw - 40px);
+            background: var(--bg-modal);
+            border: 1px solid var(--border-strong);
+            border-radius: 16px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            user-select: none;
+            animation: floatIn 0.3s ease;
         }
 
-        .player-volume-slider:hover .player-volume-thumb {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
+        .floating-player.visible {
+            display: flex;
+        }
+
+        .floating-player.dragging {
+            box-shadow: 0 40px 80px rgba(30, 215, 96, 0.3);
+            border-color: var(--accent);
+            cursor: grabbing;
+        }
+
+        @keyframes floatIn {
+            from { transform: translateY(30px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .fp-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .fp-header:active {
+            cursor: grabbing;
+        }
+
+        .fp-header .drag-handle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .fp-title {
+            flex: 1;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .fp-header-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fp-header-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .fp-header-btn.close:hover {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--accent-red);
+        }
+
+        .fp-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .fp-cover {
+            width: 160px;
+            height: 160px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: var(--bg-hover);
+            box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.5);
+        }
+
+        .fp-info {
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .fp-track-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
+
+        .fp-track-channel {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fp-progress-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .fp-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 34px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .fp-progress {
+            flex: 1;
+            height: 5px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .fp-progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.3s linear;
+        }
+
+        .fp-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .fp-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fp-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+
+        .fp-btn-play {
+            width: 64px;
+            height: 64px;
+            background: #ffffff;
+            color: #000000;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .fp-btn-play:hover {
+            transform: scale(1.06);
+            background: #ffffff;
+            color: #000000;
+        }
+
+        /* Pulsante toggle per aprire il floating player */
+        .floating-player-toggle {
+            position: fixed;
+            bottom: 120px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px -5px rgba(30, 215, 96, 0.6);
+            z-index: 499;
+            animation: pulse 2s infinite;
+        }
+
+        .floating-player-toggle.visible {
+            display: flex;
+        }
+
+        .floating-player-toggle:hover {
+            transform: scale(1.1);
+            background: var(--accent-hover);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 10px 30px -5px rgba(30, 215, 96, 0.6); }
+            50% { box-shadow: 0 10px 40px -5px rgba(30, 215, 96, 0.9); }
         }
 
         .toast-container {
@@ -1097,7 +1292,6 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
             z-index: 10000;
             display: none;
             align-items: center;
@@ -1114,7 +1308,6 @@
             padding: 28px;
             max-width: 440px;
             width: 100%;
-            box-shadow: 0 30px 60px var(--shadow);
             animation: modalIn 0.25s ease;
         }
 
@@ -1123,7 +1316,7 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        .modal h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; color: var(--text-primary); }
+        .modal h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
         .modal p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
 
         .modal input, .modal select {
@@ -1137,13 +1330,10 @@
             outline: none;
             margin-bottom: 20px;
             font-family: inherit;
-            -webkit-appearance: none;
-            appearance: none;
         }
 
         .modal input:focus, .modal select:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(30, 215, 96, 0.15);
         }
 
         .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
@@ -1155,15 +1345,12 @@
             font-weight: 600;
             cursor: pointer;
             border: none;
-            transition: all 0.15s;
         }
 
         .modal-btn.cancel { background: var(--bg-input); color: var(--text-primary); }
         .modal-btn.cancel:hover { background: var(--bg-hover); }
         .modal-btn.confirm { background: var(--accent-red); color: #fff; }
-        .modal-btn.confirm:hover { background: #ff2e43; }
         .modal-btn.primary { background: var(--accent); color: #000; }
-        .modal-btn.primary:hover { background: var(--accent-hover); }
 
         .playlist-grid {
             display: grid;
@@ -1175,7 +1362,6 @@
             background: var(--bg-card);
             border-radius: 12px;
             padding: 16px;
-            transition: all 0.25s;
             cursor: pointer;
             border: 1px solid transparent;
             display: flex;
@@ -1201,12 +1387,8 @@
             justify-content: center;
             font-size: 3rem;
             color: #fff;
-            box-shadow: 0 10px 20px -5px var(--shadow);
             position: relative;
-            overflow: hidden;
         }
-
-        .playlist-cover i { z-index: 1; text-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 
         .playlist-name {
             font-weight: 700;
@@ -1216,7 +1398,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: var(--text-primary);
         }
 
         .playlist-count { font-size: 0.78rem; color: var(--text-secondary); }
@@ -1237,13 +1418,11 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: all 0.2s;
             z-index: 3;
-            backdrop-filter: blur(4px);
         }
 
         .playlist-card:hover .playlist-delete { opacity: 1; }
-        .playlist-delete:hover { background: var(--accent-red); transform: scale(1.1); }
+        .playlist-delete:hover { background: var(--accent-red); }
 
         .file-warning {
             display: none;
@@ -1256,13 +1435,6 @@
         }
 
         .file-warning.visible { display: block; }
-        .file-warning i { margin-right: 8px; }
-        .file-warning code {
-            background: rgba(0, 0, 0, 0.25);
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-family: monospace;
-        }
 
         .yt-fallback-container {
             position: fixed;
@@ -1275,6 +1447,7 @@
             z-index: 1;
         }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .content-header-icon { width: 100px; height: 100px; font-size: 2.5rem; }
             .content-header-title { font-size: 1.8rem; }
@@ -1343,6 +1516,32 @@
             .player-progress { height: 4px; }
             .toast-container { bottom: 100px; right: 12px; left: 12px; }
             .toast { font-size: 0.8rem; padding: 12px 16px; max-width: 100%; }
+
+            /* FLOATING PLAYER SU MOBILE */
+            .floating-player {
+                width: calc(100vw - 24px);
+                max-width: 340px;
+                bottom: 100px;
+                right: 12px;
+            }
+
+            .fp-cover {
+                width: 120px;
+                height: 120px;
+            }
+
+            .fp-btn-play {
+                width: 56px;
+                height: 56px;
+                font-size: 1.2rem;
+            }
+
+            .floating-player-toggle {
+                bottom: 100px;
+                right: 12px;
+                width: 44px;
+                height: 44px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1366,6 +1565,28 @@
             .player-btn { width: 30px; height: 30px; font-size: 0.8rem; }
             .player-btn-play { width: 36px; height: 36px; font-size: 0.9rem; }
             .player-progress { height: 3px; }
+
+            .floating-player {
+                bottom: 90px;
+                right: 8px;
+                width: calc(100vw - 16px);
+                max-width: 320px;
+            }
+
+            .fp-cover {
+                width: 100px;
+                height: 100px;
+            }
+
+            .fp-body { padding: 16px; gap: 12px; }
+
+            .floating-player-toggle {
+                bottom: 90px;
+                right: 8px;
+                width: 42px;
+                height: 42px;
+                font-size: 1rem;
+            }
         }
 
         @supports (padding: env(safe-area-inset-bottom)) {
@@ -1395,7 +1616,7 @@
             <input type="text" id="searchInput" placeholder="Cerca brani..." autocomplete="off">
         </div>
         <div class="top-actions">
-            <button class="pip-toggle" id="popupToggle" title="Player separato">
+            <button class="pip-toggle" id="popupToggle" title="Apri player flottante">
                 <i class="fas fa-external-link-alt"></i>
             </button>
             <button class="theme-toggle" id="themeToggle" title="Tema">
@@ -1456,7 +1677,7 @@
                     <div class="player-track-title" id="playerTitle">Nessun brano</div>
                     <div class="player-track-channel" id="playerChannel">Seleziona un video</div>
                 </div>
-                <button class="player-fav-btn" id="playerFavBtn" title="Preferiti">
+                <button class="player-fav-btn" id="playerFavBtn">
                     <i class="far fa-heart"></i>
                 </button>
             </div>
@@ -1492,7 +1713,6 @@
                     </button>
                     <div class="player-volume-slider" id="volumeSlider">
                         <div class="player-volume-level" id="volumeLevel"></div>
-                        <div class="player-volume-thumb" id="volumeThumb"></div>
                     </div>
                 </div>
                 <button class="player-volume-btn" id="popupBtnInPlayer">
@@ -1504,6 +1724,43 @@
         <audio id="audioPlayer" preload="auto"></audio>
         <div class="yt-fallback-container" id="ytFallback"></div>
     </footer>
+
+    <!-- FLOATING PLAYER - Sostituisce il popup -->
+    <button class="floating-player-toggle" id="floatingToggle" title="Apri player flottante">
+        <i class="fas fa-compress"></i>
+    </button>
+
+    <div class="floating-player" id="floatingPlayer">
+        <div class="fp-header" id="fpHeader">
+            <i class="fas fa-grip-vertical drag-handle"></i>
+            <span class="fp-title">Spotube Player</span>
+            <button class="fp-header-btn" id="fpExpandBtn" title="Torna al player in basso">
+                <i class="fas fa-compress"></i>
+            </button>
+            <button class="fp-header-btn close" id="fpCloseBtn" title="Chiudi">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="fp-body">
+            <img class="fp-cover" id="fpCover" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 24 24' fill='%232a2a2a'%3E%3Crect width='24' height='24' fill='%23111'/%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z' fill='%23333'/%3E%3C/svg%3E" alt="Cover">
+            <div class="fp-info">
+                <div class="fp-track-title" id="fpTitle">Nessun brano</div>
+                <div class="fp-track-channel" id="fpChannel">Seleziona un video</div>
+            </div>
+            <div class="fp-progress-row">
+                <span class="fp-time" id="fpTimeCurrent">0:00</span>
+                <div class="fp-progress" id="fpProgressBar">
+                    <div class="fp-progress-bar" id="fpProgressBarFill"></div>
+                </div>
+                <span class="fp-time" id="fpTimeTotal">0:00</span>
+            </div>
+            <div class="fp-controls">
+                <button class="fp-btn" id="fpPrevBtn"><i class="fas fa-backward-step"></i></button>
+                <button class="fp-btn fp-btn-play" id="fpPlayPauseBtn"><i class="fas fa-play" id="fpPlayPauseIcon"></i></button>
+                <button class="fp-btn" id="fpNextBtn"><i class="fas fa-forward-step"></i></button>
+            </div>
+        </div>
+    </div>
 
     <div class="toast-container" id="toastContainer"></div>
 
@@ -1521,7 +1778,7 @@
 
     <script>
     // ============================================================
-    // SPOTUBE - Audio HTML5 veloce + fallback YouTube
+    // SPOTUBE - Player audio HTML5 + floating player interno
     // ============================================================
     const app = (function() {
         const API_KEY = 'AIzaSyBIa5Se73P09TNGcSSvRNUiYgH6DJmU8T8';
@@ -1619,6 +1876,24 @@
         const audioPlayer     = document.getElementById('audioPlayer');
         const ytFallback      = document.getElementById('ytFallback');
 
+        // Floating player
+        const floatingPlayer  = document.getElementById('floatingPlayer');
+        const floatingToggle  = document.getElementById('floatingToggle');
+        const fpHeader        = document.getElementById('fpHeader');
+        const fpCloseBtn      = document.getElementById('fpCloseBtn');
+        const fpExpandBtn     = document.getElementById('fpExpandBtn');
+        const fpCover         = document.getElementById('fpCover');
+        const fpTitle         = document.getElementById('fpTitle');
+        const fpChannel       = document.getElementById('fpChannel');
+        const fpTimeCurrent   = document.getElementById('fpTimeCurrent');
+        const fpTimeTotal     = document.getElementById('fpTimeTotal');
+        const fpProgressBar   = document.getElementById('fpProgressBar');
+        const fpProgressBarFill = document.getElementById('fpProgressBarFill');
+        const fpPlayPauseBtn  = document.getElementById('fpPlayPauseBtn');
+        const fpPlayPauseIcon = document.getElementById('fpPlayPauseIcon');
+        const fpPrevBtn       = document.getElementById('fpPrevBtn');
+        const fpNextBtn       = document.getElementById('fpNextBtn');
+
         const escapeHtml = (s) => String(s || '').replace(/[&<>"']/g, c => ({
             '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
         }[c]));
@@ -1711,11 +1986,6 @@
                 themeIcon.className = 'fas fa-moon';
             }
             localStorage.setItem('spotube_theme', theme);
-            if (popupPlayer && !popupPlayer.closed) {
-                try {
-                    popupPlayer.postMessage({ type: 'themeChange', theme }, '*');
-                } catch (e) {}
-            }
         };
         themeToggle.addEventListener('click', () => {
             const newTheme = state.theme === 'dark' ? 'light' : 'dark';
@@ -1723,7 +1993,7 @@
         });
 
         // ============================================================
-        // OTTENERE URL AUDIO - Parallelo con timeout
+        // OTTENERE URL AUDIO
         // ============================================================
         const getAudioUrl = async (videoId) => {
             if (state.audioUrlCache[videoId]) {
@@ -1776,18 +2046,21 @@
         const updatePlayPauseUI = () => {
             if (state.isPlaying) {
                 playPauseIcon.className = 'fas fa-pause';
-                playPauseBtn.title = 'Pausa';
+                fpPlayPauseIcon.className = 'fas fa-pause';
             } else {
                 playPauseIcon.className = 'fas fa-play';
-                playPauseBtn.title = 'Riproduci';
+                fpPlayPauseIcon.className = 'fas fa-play';
             }
         };
 
         const updateProgressUI = () => {
             const percent = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
             progressBarFill.style.width = percent + '%';
+            fpProgressBarFill.style.width = percent + '%';
             timeCurrent.textContent = formatTime(state.currentTime);
             timeTotal.textContent = formatTime(state.duration);
+            fpTimeCurrent.textContent = formatTime(state.currentTime);
+            fpTimeTotal.textContent = formatTime(state.duration);
         };
 
         const applyVolume = () => {
@@ -1811,28 +2084,22 @@
                     if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
                         state.duration = audioPlayer.duration;
                     }
-                    updateProgressUI();
                 } else {
                     if (state.isPlaying && state.currentTime < state.duration) {
                         state.currentTime += 0.5;
-                        updateProgressUI();
                     }
                 }
-                if (Math.floor(state.currentTime * 2) % 2 === 0) {
-                    broadcastStateToPopup();
-                }
+                updateProgressUI();
             }, 500);
         };
 
         audioPlayer.addEventListener('play', () => {
             state.isPlaying = true;
             updatePlayPauseUI();
-            broadcastStateToPopup();
         });
         audioPlayer.addEventListener('pause', () => {
             state.isPlaying = false;
             updatePlayPauseUI();
-            broadcastStateToPopup();
         });
         audioPlayer.addEventListener('ended', () => {
             if (state.isRepeat) {
@@ -1845,7 +2112,6 @@
         audioPlayer.addEventListener('loadedmetadata', () => {
             if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
                 state.duration = audioPlayer.duration;
-                timeTotal.textContent = formatTime(state.duration);
                 updateProgressUI();
             }
         });
@@ -1863,17 +2129,9 @@
             state.usingFallback = true;
             const origin = window.location.origin && window.location.origin !== 'null'
                 ? window.location.origin : 'http://localhost';
-            // Costruisco l'URL con tutti i parametri per rimuovere pubblicità e overlay
             const embedUrl = `https://www.youtube.com/embed/${track.videoId}`
-                + `?autoplay=1`
-                + `&rel=0`                 // niente video correlati
-                + `&modestbranding=1`       // rimuove il logo YouTube
-                + `&playsinline=1`          // riproduzione inline su mobile
-                + `&controls=0`             // nasconde i controlli
-                + `&iv_load_policy=3`       // nasconde le annotazioni
-                + `&cc_load_policy=0`       // niente sottotitoli automatici
-                + `&fs=0`                   // disabilita il pulsante fullscreen
-                + `&disablekb=1`            // disabilita la tastiera
+                + `?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0`
+                + `&iv_load_policy=3&cc_load_policy=0&fs=0&disablekb=1`
                 + `&enablejsapi=1`
                 + `&origin=${encodeURIComponent(origin)}`;
             ytFallback.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
@@ -1913,16 +2171,21 @@
             playerTitle.textContent = track.title;
             playerChannel.textContent = track.channel;
             playerCover.src = track.thumbnail || DEFAULT_THUMB;
+            fpTitle.textContent = track.title;
+            fpChannel.textContent = track.channel;
+            fpCover.src = track.thumbnail || DEFAULT_THUMB;
             updateFavButtonUI();
 
             progressBarFill.style.width = '0%';
+            fpProgressBarFill.style.width = '0%';
             timeCurrent.textContent = '0:00';
             timeTotal.textContent = formatTime(state.durationCache[track.videoId] || 240);
+            fpTimeCurrent.textContent = '0:00';
+            fpTimeTotal.textContent = formatTime(state.durationCache[track.videoId] || 240);
 
             try { audioPlayer.pause(); } catch (e) {}
             updatePlayPauseUI();
 
-            // CACHE
             if (state.audioUrlCache[track.videoId]) {
                 const c = state.audioUrlCache[track.videoId];
                 if (c.timestamp && (Date.now() - c.timestamp) < 30 * 60 * 1000) {
@@ -1932,7 +2195,6 @@
                     try {
                         await audioPlayer.play();
                         state.duration = state.durationCache[track.videoId] || 240;
-                        timeTotal.textContent = formatTime(state.duration);
                         startProgress();
                         addToHistory(track);
                         if (state.view === 'history') renderHistory();
@@ -1943,7 +2205,6 @@
                 }
             }
 
-            // RICERCA
             const url = await getAudioUrl(track.videoId);
 
             if (playId !== state.currentPlayId) return;
@@ -1958,7 +2219,6 @@
                 } catch (e) {
                     useFallback(track);
                 }
-                timeTotal.textContent = formatTime(state.duration);
             } else {
                 useFallback(track);
             }
@@ -1989,7 +2249,6 @@
                 if (audioPlayer.paused) audioPlayer.play().catch(() => {});
                 else audioPlayer.pause();
             }
-            broadcastStateToPopup();
         };
 
         const playNext = () => {
@@ -2020,15 +2279,145 @@
         const toggleShuffle = () => {
             state.isShuffle = !state.isShuffle;
             shuffleBtn.classList.toggle('active', state.isShuffle);
-            broadcastStateToPopup();
         };
 
         const toggleRepeat = () => {
             state.isRepeat = !state.isRepeat;
             repeatBtn.classList.toggle('active', state.isRepeat);
-            broadcastStateToPopup();
         };
 
+        // ============================================================
+        // FLOATING PLAYER - Trascinabile
+        // ============================================================
+        let isDragging = false;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        let savedPosition = JSON.parse(localStorage.getItem('spotube_fp_pos') || 'null');
+
+        const applySavedPosition = () => {
+            if (savedPosition) {
+                const maxX = window.innerWidth - floatingPlayer.offsetWidth - 10;
+                const maxY = window.innerHeight - floatingPlayer.offsetHeight - 10;
+                const x = Math.max(10, Math.min(savedPosition.x, maxX));
+                const y = Math.max(10, Math.min(savedPosition.y, maxY));
+                floatingPlayer.style.left = x + 'px';
+                floatingPlayer.style.top = y + 'px';
+                floatingPlayer.style.right = 'auto';
+                floatingPlayer.style.bottom = 'auto';
+            }
+        };
+
+        const onDragStart = (e) => {
+            if (e.target.closest('button')) return;
+            isDragging = true;
+            floatingPlayer.classList.add('dragging');
+            const rect = floatingPlayer.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            dragOffsetX = clientX - rect.left;
+            dragOffsetY = clientY - rect.top;
+            document.addEventListener('mousemove', onDragMove);
+            document.addEventListener('mouseup', onDragEnd);
+            document.addEventListener('touchmove', onDragMove, { passive: false });
+            document.addEventListener('touchend', onDragEnd);
+        };
+
+        const onDragMove = (e) => {
+            if (!isDragging) return;
+            if (e.cancelable) e.preventDefault();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            let newX = clientX - dragOffsetX;
+            let newY = clientY - dragOffsetY;
+            const maxX = window.innerWidth - floatingPlayer.offsetWidth - 10;
+            const maxY = window.innerHeight - floatingPlayer.offsetHeight - 10;
+            newX = Math.max(10, Math.min(newX, maxX));
+            newY = Math.max(10, Math.min(newY, maxY));
+            floatingPlayer.style.left = newX + 'px';
+            floatingPlayer.style.top = newY + 'px';
+            floatingPlayer.style.right = 'auto';
+            floatingPlayer.style.bottom = 'auto';
+        };
+
+        const onDragEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            floatingPlayer.classList.remove('dragging');
+            const rect = floatingPlayer.getBoundingClientRect();
+            savedPosition = { x: rect.left, y: rect.top };
+            try { localStorage.setItem('spotube_fp_pos', JSON.stringify(savedPosition)); } catch (e) {}
+            document.removeEventListener('mousemove', onDragMove);
+            document.removeEventListener('mouseup', onDragEnd);
+            document.removeEventListener('touchmove', onDragMove);
+            document.removeEventListener('touchend', onDragEnd);
+        };
+
+        fpHeader.addEventListener('mousedown', onDragStart);
+        fpHeader.addEventListener('touchstart', onDragStart, { passive: true });
+
+        const showFloatingPlayer = () => {
+            if (!state.currentTrack) {
+                showToast('Riproduci prima un brano!', 'fa-info-circle', 'warning');
+                return;
+            }
+            floatingPlayer.classList.add('visible');
+            floatingToggle.classList.remove('visible');
+            setTimeout(applySavedPosition, 50);
+        };
+
+        const hideFloatingPlayer = () => {
+            floatingPlayer.classList.remove('visible');
+            if (state.currentTrack) {
+                floatingToggle.classList.add('visible');
+            }
+        };
+
+        floatingToggle.addEventListener('click', showFloatingPlayer);
+        fpCloseBtn.addEventListener('click', hideFloatingPlayer);
+        fpExpandBtn.addEventListener('click', () => {
+            hideFloatingPlayer();
+            showToast('Player ripristinato', 'fa-compress', 'info');
+        });
+
+        fpPlayPauseBtn.addEventListener('click', togglePlayPause);
+        fpPrevBtn.addEventListener('click', playPrev);
+        fpNextBtn.addEventListener('click', playNext);
+
+        fpProgressBar.addEventListener('click', (e) => {
+            const rect = fpProgressBar.getBoundingClientRect();
+            const p = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            state.currentTime = p * state.duration;
+            updateProgressUI();
+            if (state.usingFallback) sendYT('seekTo', String(Math.floor(state.currentTime)));
+            else { try { audioPlayer.currentTime = state.currentTime; } catch (err) {} }
+        });
+
+        // Toggle dal pulsante in alto
+        popupToggle.addEventListener('click', () => {
+            if (floatingPlayer.classList.contains('visible')) {
+                hideFloatingPlayer();
+            } else {
+                showFloatingPlayer();
+            }
+        });
+        popupBtnInPlayer.addEventListener('click', showFloatingPlayer);
+
+        // Aggiorna anche su resize
+        window.addEventListener('resize', () => {
+            if (floatingPlayer.classList.contains('visible')) {
+                const rect = floatingPlayer.getBoundingClientRect();
+                const maxX = window.innerWidth - floatingPlayer.offsetWidth - 10;
+                const maxY = window.innerHeight - floatingPlayer.offsetHeight - 10;
+                if (rect.left > maxX || rect.top > maxY) {
+                    floatingPlayer.style.left = Math.max(10, Math.min(rect.left, maxX)) + 'px';
+                    floatingPlayer.style.top = Math.max(10, Math.min(rect.top, maxY)) + 'px';
+                }
+            }
+        });
+
+        // ============================================================
+        // VOLUME E SEEK
+        // ============================================================
         const setVolumeFromEvent = (e) => {
             const rect = volumeSlider.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -2038,7 +2427,6 @@
             applyVolume();
             if (state.usingFallback) sendYT('setVolume', String(Math.round(state.volume)));
             saveStorage();
-            broadcastStateToPopup();
         };
 
         let volumeDragging = false;
@@ -2072,7 +2460,6 @@
             applyVolume();
             if (state.usingFallback) sendYT('setVolume', String(state.isMuted ? 0 : Math.round(state.volume)));
             saveStorage();
-            broadcastStateToPopup();
         });
 
         let progressDragging = false;
@@ -2083,8 +2470,7 @@
             state.currentTime = (p / 100) * state.duration;
             updateProgressUI();
             if (state.usingFallback) sendYT('seekTo', String(Math.floor(state.currentTime)));
-            else { try { audioPlayer.currentTime = state.currentTime; } catch (e) {} }
-            broadcastStateToPopup();
+            else { try { audioPlayer.currentTime = state.currentTime; } catch (err) {} }
         };
         progressBar.addEventListener('mousedown', (e) => {
             progressDragging = true;
@@ -2130,256 +2516,6 @@
                 playerFavBtn.querySelector('i').className = 'far fa-heart';
             }
         };
-
-        // ============================================================
-        // POPUP PLAYER - con Blob URL (più affidabile su mobile)
-        // ============================================================
-        let popupPlayer = null;
-
-        const buildPopupHTML = (track, colors) => {
-            return `<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spotube Remote</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-body{background:${colors.bg};color:${colors.text};height:100vh;overflow:hidden;display:flex;flex-direction:column;user-select:none;}
-.header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid ${colors.border};flex-shrink:0;}
-.logo{color:${colors.accent};font-size:1.2rem;}
-.title{flex:1;font-size:0.75rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;}
-.btn-close{width:28px;height:28px;border-radius:50%;background:transparent;border:none;color:${colors.textSecondary};cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;}
-.btn-close:hover{background:${colors.hover};color:${colors.text};}
-.track-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 24px;gap:18px;}
-.cover-wrapper{width:180px;height:180px;border-radius:14px;overflow:hidden;background:${colors.bgSecondary};box-shadow:0 20px 40px -10px rgba(0,0,0,0.5);}
-.cover-wrapper img{width:100%;height:100%;object-fit:cover;}
-.info{width:100%;text-align:center;display:flex;flex-direction:column;gap:6px;}
-.track-title{font-size:1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.track-channel{font-size:0.85rem;color:${colors.textSecondary};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.progress-row{display:flex;align-items:center;gap:10px;width:100%;margin-top:6px;}
-.time{font-size:0.72rem;color:${colors.textSecondary};min-width:36px;text-align:center;font-variant-numeric:tabular-nums;}
-.progress{flex:1;height:5px;background:${colors.progress};border-radius:3px;cursor:pointer;}
-.progress-bar{height:100%;background:${colors.accent};width:0%;border-radius:3px;transition:width 0.3s linear;}
-.controls{display:flex;align-items:center;justify-content:center;gap:22px;padding:16px 20px 24px 20px;}
-.btn{width:44px;height:44px;border-radius:50%;background:transparent;border:none;color:${colors.textSecondary};cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;}
-.btn:hover{color:${colors.text};transform:scale(1.1);}
-.btn-play{width:70px;height:70px;background:#ffffff;color:#000000;font-size:1.6rem;box-shadow:0 8px 20px rgba(0,0,0,0.3);}
-.btn-play:hover{transform:scale(1.06);}
-</style>
-</head>
-<body>
-<div class="header">
-<i class="fas fa-play-circle logo"></i>
-<span class="title">Spotube Remote</span>
-<button class="btn-close" onclick="window.close()"><i class="fas fa-times"></i></button>
-</div>
-<div class="track-area">
-<div class="cover-wrapper"><img id="cover" src="${track.thumbnail || DEFAULT_THUMB}" onerror="this.style.display='none'"></div>
-<div class="info">
-<div class="track-title" id="trackTitle">${escapeHtml(track.title)}</div>
-<div class="track-channel" id="trackChannel">${escapeHtml(track.channel)}</div>
-</div>
-<div class="progress-row">
-<span class="time" id="timeCurrent">0:00</span>
-<div class="progress" id="progressBar"><div class="progress-bar" id="progressBarFill"></div></div>
-<span class="time" id="timeTotal">0:00</span>
-</div>
-</div>
-<div class="controls">
-<button class="btn" id="prevBtn"><i class="fas fa-backward-step"></i></button>
-<button class="btn btn-play" id="playPauseBtn"><i class="fas fa-pause" id="playPauseIcon"></i></button>
-<button class="btn" id="nextBtn"><i class="fas fa-forward-step"></i></button>
-</div>
-<script>
-let localIsPlaying=true,localCurrentTime=0,localDuration=0;
-function sendCommand(command,value){
-    try{
-        if(window.opener&&!window.opener.closed){
-            window.opener.postMessage({type:'popupCommand',command:command,value:value},'*');
-        }
-    }catch(e){}
-}
-function formatTime(s){
-    if(!s||isNaN(s))return '0:00';
-    const m=Math.floor(s/60),sec=Math.floor(s%60);
-    return m+':'+(sec<10?'0':'')+sec;
-}
-window.addEventListener('message',function(event){
-    const data=event.data;
-    if(!data||!data.type)return;
-    if(data.type==='stateUpdate'){
-        const s=data.state;
-        localIsPlaying=s.isPlaying;
-        localCurrentTime=s.currentTime;
-        localDuration=s.duration;
-        document.getElementById('playPauseIcon').className=localIsPlaying?'fas fa-pause':'fas fa-play';
-        const percent=localDuration>0?(localCurrentTime/localDuration)*100:0;
-        document.getElementById('progressBarFill').style.width=percent+'%';
-        document.getElementById('timeCurrent').textContent=formatTime(localCurrentTime);
-        document.getElementById('timeTotal').textContent=formatTime(localDuration);
-        if(s.track){
-            document.getElementById('trackTitle').textContent=s.track.title;
-            document.getElementById('trackChannel').textContent=s.track.channel;
-            if(s.track.thumbnail){
-                const img=document.getElementById('cover');
-                img.src=s.track.thumbnail;
-                img.style.display='block';
-            }
-        }
-    }
-});
-document.getElementById('playPauseBtn').addEventListener('click',function(){sendCommand('togglePlayPause');});
-document.getElementById('prevBtn').addEventListener('click',function(){sendCommand('prev');});
-document.getElementById('nextBtn').addEventListener('click',function(){sendCommand('next');});
-document.getElementById('progressBar').addEventListener('click',function(e){
-    const rect=e.currentTarget.getBoundingClientRect();
-    const percent=(e.clientX-rect.left)/rect.width;
-    sendCommand('seek',percent*localDuration);
-});
-window.addEventListener('load',function(){
-    try{
-        if(window.opener&&!window.opener.closed){
-            window.opener.postMessage({type:'popupCommand',command:'popupReady'},'*');
-        }
-    }catch(e){}
-});
-<\/script>
-</body>
-</html>`;
-        };
-
-        const openPopupPlayer = () => {
-            if (!state.currentTrack) {
-                showToast('Riproduci prima un brano!', 'fa-info-circle', 'warning');
-                return;
-            }
-
-            // Se esiste già ed è aperto, portalo in primo piano
-            if (popupPlayer && !popupPlayer.closed) {
-                try {
-                    popupPlayer.focus();
-                    broadcastStateToPopup();
-                    return;
-                } catch (e) {
-                    popupPlayer = null;
-                }
-            }
-
-            const isLight = state.theme === 'light';
-            const colors = isLight ? {
-                bg: '#ffffff', bgSecondary: '#f5f5f7', text: '#111111',
-                textSecondary: '#555555', border: 'rgba(0,0,0,0.08)',
-                accent: '#0f9d58', hover: 'rgba(0,0,0,0.05)', progress: '#e0e0e0'
-            } : {
-                bg: '#0a0a0f', bgSecondary: '#1a1a22', text: '#ffffff',
-                textSecondary: '#b3b3b3', border: 'rgba(255,255,255,0.08)',
-                accent: '#1ed760', hover: 'rgba(255,255,255,0.05)', progress: 'rgba(255,255,255,0.1)'
-            };
-
-            const html = buildPopupHTML(state.currentTrack, colors);
-
-            // Su mobile i popup con document.write a volte si bloccano.
-            // Uso un approccio ibrido: prima provo con Blob URL, se non funziona uso document.write.
-            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-            if (isMobile) {
-                // Su mobile: Blob URL + apertura con _blank (più affidabile)
-                try {
-                    const blob = new Blob([html], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
-                    const w = 380, h = 520;
-                    const left = Math.max(0, window.screen.width - w - 20);
-                    const top = Math.max(0, window.screen.height - h - 60);
-
-                    popupPlayer = window.open(url, 'SpotubeRemote',
-                        `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=no,status=no,menubar=no,toolbar=no,location=no`);
-
-                    if (!popupPlayer) {
-                        URL.revokeObjectURL(url);
-                        showToast('Popup bloccato! Abilita i popup.', 'fa-exclamation-triangle', 'error');
-                        return;
-                    }
-
-                    // Rilascia la URL dopo il caricamento
-                    setTimeout(() => URL.revokeObjectURL(url), 10000);
-
-                    showToast('Player remoto aperto!', 'fa-external-link-alt', 'info');
-                    setTimeout(() => broadcastStateToPopup(), 800);
-                    setTimeout(() => broadcastStateToPopup(), 1500);
-                    setTimeout(() => broadcastStateToPopup(), 2500);
-                } catch (e) {
-                    console.warn('Blob URL fallito:', e);
-                    showToast('Impossibile aprire il player separato', 'fa-exclamation-triangle', 'error');
-                }
-            } else {
-                // Su desktop: document.write (funziona bene)
-                try {
-                    const w = 380, h = 520;
-                    const left = window.screen.width - w - 40;
-                    const top = Math.max(40, window.screen.height - h - 80);
-
-                    popupPlayer = window.open('', 'SpotubeRemote',
-                        `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=no,status=no,menubar=no,toolbar=no,location=no`);
-
-                    if (!popupPlayer) {
-                        showToast('Popup bloccato! Abilita i popup.', 'fa-exclamation-triangle', 'error');
-                        return;
-                    }
-
-                    popupPlayer.document.open();
-                    popupPlayer.document.write(html);
-                    popupPlayer.document.close();
-
-                    showToast('Player remoto aperto!', 'fa-external-link-alt', 'info');
-                    setTimeout(() => broadcastStateToPopup(), 500);
-                } catch (e) {
-                    console.warn('document.write fallito:', e);
-                    showToast('Impossibile aprire il player separato', 'fa-exclamation-triangle', 'error');
-                }
-            }
-        };
-        popupToggle.addEventListener('click', openPopupPlayer);
-        popupBtnInPlayer.addEventListener('click', openPopupPlayer);
-
-        const broadcastStateToPopup = () => {
-            if (!popupPlayer || popupPlayer.closed) return;
-            try {
-                popupPlayer.postMessage({
-                    type: 'stateUpdate',
-                    state: {
-                        isPlaying: state.isPlaying,
-                        currentTime: state.currentTime,
-                        duration: state.duration,
-                        volume: state.isMuted ? 0 : state.volume,
-                        isMuted: state.isMuted,
-                        track: state.currentTrack,
-                        theme: state.theme
-                    }
-                }, '*');
-            } catch (e) {}
-        };
-
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            if (!data || !data.type) return;
-            if (data.type === 'popupCommand') {
-                const command = data.command;
-                if (command === 'togglePlayPause') togglePlayPause();
-                else if (command === 'next') playNext();
-                else if (command === 'prev') playPrev();
-                else if (command === 'seek') {
-                    state.currentTime = data.value;
-                    if (state.usingFallback) sendYT('seekTo', String(Math.floor(data.value)));
-                    else { try { audioPlayer.currentTime = data.value; } catch (e) {} }
-                    updateProgressUI();
-                } else if (command === 'popupReady') {
-                    broadcastStateToPopup();
-                }
-            }
-        });
 
         const fetchDuration = async (videoId) => {
             if (state.durationCache[videoId]) return state.durationCache[videoId];
@@ -2581,7 +2717,7 @@ window.addEventListener('load',function(){
                 if (pipBtn) pipBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     playTrack(track, items, items.indexOf(track));
-                    setTimeout(() => openPopupPlayer(), 400);
+                    setTimeout(showFloatingPlayer, 500);
                 });
                 const dlBtn = card.querySelector('[data-action="download"]');
                 if (dlBtn) dlBtn.addEventListener('click', (e) => { e.stopPropagation(); downloadTrack(track); });
