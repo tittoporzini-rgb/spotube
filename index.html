@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.youtube.com">
-    <link rel="preconnect" href="https://i.ytimg.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -92,7 +90,6 @@
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
         .top-bar {
             display: flex;
@@ -775,6 +772,7 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ============ PLAYER ============ */
         .player-bar {
             background: var(--bg-player);
             border-top: 1px solid var(--border);
@@ -1063,6 +1061,26 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
+        /* Player YouTube nascosto ma funzionante - VISIBILE al browser */
+        .yt-player-container {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 320px;
+            height: 180px;
+            opacity: 0.001;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .yt-player-container iframe {
+            width: 320px;
+            height: 180px;
+            border: none;
+        }
+
+        /* ============ TOAST ============ */
         .toast-container {
             position: fixed;
             bottom: 130px;
@@ -1274,19 +1292,6 @@
             padding: 2px 8px;
             border-radius: 6px;
             font-family: monospace;
-        }
-
-        /* Player YouTube nascosto ma funzionante */
-        .yt-player-container {
-            position: absolute;
-            width: 240px;
-            height: 135px;
-            opacity: 0.001;
-            pointer-events: none;
-            bottom: 0;
-            right: 0;
-            z-index: -1;
-            overflow: hidden;
         }
 
         @media (max-width: 1024px) {
@@ -1546,14 +1551,10 @@
                 </button>
             </div>
         </div>
-
-        <!-- Container per il player YouTube (nascosto ma funzionante) -->
-        <div class="yt-player-container" id="ytPlayerContainer">
-            <div id="ytPlayer"></div>
-        </div>
-        <!-- Audio HTML5 di riserva (per streaming diretto se disponibile) -->
-        <audio id="audioPlayer" preload="auto"></audio>
     </footer>
+
+    <!-- PLAYER YOUTUBE NASCOSTO MA FUNZIONANTE - Creato subito all'avvio -->
+    <div class="yt-player-container" id="ytPlayerContainer"></div>
 
     <div class="toast-container" id="toastContainer"></div>
 
@@ -1569,18 +1570,20 @@
         </div>
     </div>
 
-    <!-- API IFrame YouTube caricata UNA SOLA VOLTA all'avvio -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-
     <script>
     // ============================================================
-    // SPOTUBE - Player YouTube API + preload intelligente
-    // La musica parte SEMPRE in 1-2 secondi
+    // SPOTUBE - iframe YouTube con preload all'avvio
+    // L'iframe viene creato SUBITO con un video qualsiasi
+    // Quando clicchi, il player è già pronto → parte in 1-2s
     // ============================================================
     const app = (function() {
         const API_KEY = 'AIzaSyBIa5Se73P09TNGcSSvRNUiYgH6DJmU8T8';
         const MAX_RESULTS = 24;
         const YT_API = 'https://www.googleapis.com/youtube/v3';
+
+        // Video "placeholder" per inizializzare il player (video musicale breve)
+        // Usiamo un video qualsiasi per "scaldare" il player
+        const WARMUP_VIDEO_ID = 'dQw4w9WgXcQ';
 
         const DEFAULT_THUMB = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 24 24' fill='%232a2a2a'%3E%3Crect width='24' height='24' fill='%23111'/%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z' fill='%23333'/%3E%3C/svg%3E";
 
@@ -1612,11 +1615,7 @@
             duration: 0,
             progressInterval: null,
             durationCache: JSON.parse(localStorage.getItem('spotube_duration_cache') || '{}'),
-            ytPlayer: null,
-            ytReady: false,
-            isUsingYTPlayer: false,
-            currentPlayId: 0,
-            preloadTimer: null
+            ytIframeReady: false
         };
 
         const searchInput     = document.getElementById('searchInput');
@@ -1659,7 +1658,7 @@
         const volumeIcon      = document.getElementById('volumeIcon');
         const volumeBtn       = document.getElementById('volumeBtn');
         const popupBtnInPlayer = document.getElementById('popupBtnInPlayer');
-        const audioPlayer     = document.getElementById('audioPlayer');
+        const ytPlayerContainer = document.getElementById('ytPlayerContainer');
 
         const escapeHtml = (s) => String(s || '').replace(/[&<>"']/g, c => ({
             '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -1766,93 +1765,77 @@
         });
 
         // ============================================================
-        // YOUTUBE PLAYER API - Inizializzato UNA SOLA VOLTA
-        // Il player è pronto all'uso → avvio istantaneo dei brani
+        // IFRAME YOUTUBE - Creato SUBITO all'avvio dell'app
         // ============================================================
-        window.onYouTubeIframeAPIReady = function() {
-            console.log('📺 YouTube IFrame API pronta');
-            initYTPlayer();
-        };
+        const createYTIframe = (videoId) => {
+            const origin = window.location.origin && window.location.origin !== 'null'
+                ? window.location.origin : 'http://localhost';
+            const embedUrl = `https://www.youtube.com/embed/${videoId}`
+                + `?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0`
+                + `&enablejsapi=1`
+                + `&origin=${encodeURIComponent(origin)}`;
 
-        const initYTPlayer = () => {
-            state.ytPlayer = new YT.Player('ytPlayer', {
-                height: '135',
-                width: '240',
-                videoId: '',
-                playerVars: {
-                    autoplay: 1,
-                    controls: 0,
-                    disablekb: 1,
-                    fs: 0,
-                    modestbranding: 1,
-                    rel: 0,
-                    playsinline: 1,
-                    origin: window.location.origin
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange,
-                    'onError': onPlayerError
-                }
-            });
-        };
+            ytPlayerContainer.innerHTML = `
+                <iframe
+                    id="ytIframe"
+                    src="${embedUrl}"
+                    allow="autoplay; encrypted-media"
+                    referrerpolicy="strict-origin-when-cross-origin">
+                </iframe>
+            `;
 
-        const onPlayerReady = (event) => {
-            state.ytReady = true;
-            console.log('✅ YouTube Player pronto');
-            event.target.setVolume(state.isMuted ? 0 : state.volume);
-        };
-
-        const onPlayerStateChange = (event) => {
-            const stateCode = event.data;
-            if (stateCode === YT.PlayerState.PLAYING) {
-                state.isPlaying = true;
-                if (!state.duration) {
-                    state.duration = event.target.getDuration() || 0;
-                }
-                updatePlayPauseUI();
-                updateProgressUI();
-                broadcastStateToPopup();
-            } else if (stateCode === YT.PlayerState.PAUSED) {
-                state.isPlaying = false;
-                updatePlayPauseUI();
-                broadcastStateToPopup();
-            } else if (stateCode === YT.PlayerState.ENDED) {
-                if (state.isRepeat) {
-                    event.target.seekTo(0);
-                    event.target.playVideo();
-                } else {
-                    playNext();
-                }
+            const iframe = document.getElementById('ytIframe');
+            if (iframe) {
+                iframe.addEventListener('load', () => {
+                    state.ytIframeReady = true;
+                    console.log('✅ Iframe YouTube pronto');
+                });
             }
         };
 
-        const onPlayerError = (event) => {
-            console.warn('Errore YT:', event.data);
-            if (event.data === 100 || event.data === 101 || event.data === 150) {
-                showToast('Video non disponibile', 'fa-exclamation-triangle', 'warning');
-                setTimeout(playNext, 1000);
+        const sendYTCommand = (func, args = '') => {
+            const iframe = document.getElementById('ytIframe');
+            if (!iframe || !iframe.contentWindow) return;
+            try {
+                iframe.contentWindow.postMessage(
+                    JSON.stringify({ event: 'command', func: func, args: args }),
+                    '*'
+                );
+            } catch (e) {}
+        };
+
+        const loadVideoById = (videoId) => {
+            // Invia comando loadVideoById all'iframe già esistente
+            const iframe = document.getElementById('ytIframe');
+            if (!iframe || !iframe.contentWindow) return false;
+
+            // Prova prima loadVideoById (veloce se il player è pronto)
+            try {
+                iframe.contentWindow.postMessage(
+                    JSON.stringify({ event: 'command', func: 'loadVideoById', args: [videoId] }),
+                    '*'
+                );
+                return true;
+            } catch (e) {
+                return false;
             }
         };
 
         // ============================================================
-        // PROGRESS TRACKING (dal player YT ufficiale)
+        // PROGRESS TRACKING con simulazione (l'iframe non ci dice il tempo)
         // ============================================================
         const startProgressTracking = () => {
             if (state.progressInterval) clearInterval(state.progressInterval);
             state.progressInterval = setInterval(() => {
-                if (!state.ytPlayer || !state.ytReady) return;
-                if (!state.currentTrack) return;
-                try {
-                    const t = state.ytPlayer.getCurrentTime() || 0;
-                    const d = state.ytPlayer.getDuration() || 0;
-                    state.currentTime = t;
-                    if (d > 0) state.duration = d;
+                if (!state.currentTrack || !state.isPlaying) return;
+                if (state.currentTime < state.duration) {
+                    state.currentTime += 0.5;
+                    if (state.currentTime > state.duration) state.currentTime = state.duration;
                     updateProgressUI();
                     if (Math.floor(state.currentTime * 2) % 2 === 0) {
                         broadcastStateToPopup();
                     }
-                } catch (e) {}
+                }
             }, 500);
         };
 
@@ -1874,11 +1857,7 @@
         };
 
         const applyVolume = () => {
-            if (state.ytPlayer && state.ytReady) {
-                try {
-                    state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
-                } catch (e) {}
-            }
+            sendYTCommand('setVolume', String(state.isMuted ? 0 : Math.round(state.volume)));
             volumeLevel.style.width = (state.isMuted ? 0 : state.volume) + '%';
             if (state.isMuted || state.volume === 0) {
                 volumeIcon.className = 'fas fa-volume-xmark';
@@ -1890,12 +1869,10 @@
         };
 
         // ============================================================
-        // PLAY TRACK - ISTANTANEO con YT Player API
+        // PLAY TRACK - ISTANTANEO perché l'iframe è già pronto
         // ============================================================
         const playTrack = (track, queue = null, index = -1) => {
             if (!track) return;
-
-            const playId = ++state.currentPlayId;
 
             if (queue && Array.isArray(queue)) {
                 state.currentQueue = queue;
@@ -1907,7 +1884,6 @@
 
             state.currentTrack = track;
             state.currentTime = 0;
-            state.duration = state.durationCache[track.videoId] || 0;
             state.isPlaying = true;
 
             // Aggiorna UI IMMEDIATAMENTE
@@ -1918,46 +1894,33 @@
             updatePlayPauseUI();
             progressBarFill.style.width = '0%';
             timeCurrent.textContent = '0:00';
-            timeTotal.textContent = formatTime(state.duration);
-            updateProgressUI();
 
-            // ==========================================
-            // AVVIO ISTANTANEO con loadVideoById
-            // ==========================================
-            if (state.ytPlayer && state.ytReady) {
-                try {
-                    state.ytPlayer.loadVideoById(track.videoId);
-                    state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
-                    console.log('▶️ Video avviato istantaneamente');
-                } catch (e) {
-                    console.warn('Errore loadVideoById:', e);
-                }
-            } else {
-                // Se il player non è ancora pronto, riprova per 5 secondi
-                const retry = (attempt = 0) => {
-                    if (playId !== state.currentPlayId) return;
-                    if (state.ytPlayer && state.ytReady) {
-                        try {
-                            state.ytPlayer.loadVideoById(track.videoId);
-                            state.ytPlayer.setVolume(state.isMuted ? 0 : state.volume);
-                        } catch (e) {}
-                    } else if (attempt < 25) {
-                        setTimeout(() => retry(attempt + 1), 200);
-                    }
-                };
-                retry();
+            // Recupera durata dalla cache o dalla API
+            state.duration = state.durationCache[track.videoId] || 240;
+            timeTotal.textContent = formatTime(state.duration);
+
+            // Carica il video nell'iframe
+            const ok = loadVideoById(track.videoId);
+
+            if (!ok) {
+                // Se il player non è pronto, ricrea l'iframe con il nuovo video
+                createYTIframe(track.videoId);
             }
+
+            // Applica volume dopo un piccolo delay
+            setTimeout(() => applyVolume(), 300);
+
+            // Recupera durata reale in background
+            fetchVideoDuration(track.videoId).then(d => {
+                if (state.currentTrack && state.currentTrack.videoId === track.videoId) {
+                    state.duration = d;
+                    timeTotal.textContent = formatTime(d);
+                }
+            });
 
             startProgressTracking();
             addToHistory(track);
             if (state.view === 'history') renderHistory();
-
-            // Recupera durata reale in background (per la barra)
-            fetchVideoDuration(track.videoId).then(d => {
-                if (playId !== state.currentPlayId) return;
-                state.durationCache[track.videoId] = d;
-                try { localStorage.setItem('spotube_duration_cache', JSON.stringify(state.durationCache)); } catch (e) {}
-            });
         };
 
         const togglePlayPause = () => {
@@ -1965,12 +1928,11 @@
                 showToast('Nessun brano selezionato', 'fa-info-circle', 'warning');
                 return;
             }
-            if (state.ytPlayer && state.ytReady) {
-                try {
-                    if (state.isPlaying) state.ytPlayer.pauseVideo();
-                    else state.ytPlayer.playVideo();
-                } catch (e) {}
-            }
+            state.isPlaying = !state.isPlaying;
+            if (state.isPlaying) sendYTCommand('playVideo');
+            else sendYTCommand('pauseVideo');
+            updatePlayPauseUI();
+            broadcastStateToPopup();
         };
 
         const playNext = () => {
@@ -1987,11 +1949,10 @@
         const playPrev = () => {
             if (state.currentQueue.length === 0) return;
             if (state.currentTime > 3) {
-                if (state.ytPlayer && state.ytReady) {
-                    try { state.ytPlayer.seekTo(0, true); } catch (e) {}
-                }
                 state.currentTime = 0;
+                sendYTCommand('seekTo', '0');
                 updateProgressUI();
+                broadcastStateToPopup();
                 return;
             }
             let prevIndex = state.currentQueueIndex - 1;
@@ -2064,9 +2025,7 @@
             const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
             state.currentTime = (percent / 100) * state.duration;
             updateProgressUI();
-            if (state.ytPlayer && state.ytReady) {
-                try { state.ytPlayer.seekTo(state.currentTime, true); } catch (e) {}
-            }
+            sendYTCommand('seekTo', String(Math.floor(state.currentTime)));
             broadcastStateToPopup();
         };
         progressBar.addEventListener('mousedown', (e) => {
@@ -2115,7 +2074,7 @@
         };
 
         // ============================================================
-        // POPUP PLAYER (sincronizzato)
+        // POPUP PLAYER
         // ============================================================
         let popupPlayer = null;
         const openPopupPlayer = () => {
@@ -2279,9 +2238,7 @@ window.addEventListener('load', () => {
                 else if (command === 'prev') playPrev();
                 else if (command === 'seek') {
                     state.currentTime = data.value;
-                    if (state.ytPlayer && state.ytReady) {
-                        try { state.ytPlayer.seekTo(data.value, true); } catch (e) {}
-                    }
+                    sendYTCommand('seekTo', String(Math.floor(data.value)));
                     updateProgressUI();
                 } else if (command === 'setVolume') {
                     state.volume = data.value;
@@ -2957,7 +2914,11 @@ window.addEventListener('load', () => {
             renderPlaylistMiniList();
             applyVolume();
             renderHome();
-            console.log('🚀 Spotube avviato con YouTube Player API');
+
+            // 🔥 PRELOAD: Crea l'iframe YouTube SUBITO all'avvio
+            // con un video placeholder per "scaldare" il player
+            console.log('🔥 Preload iframe YouTube...');
+            createYTIframe(WARMUP_VIDEO_ID);
         };
 
         return { init, showHome, playTrack };
