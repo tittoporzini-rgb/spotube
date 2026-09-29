@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.youtube.com">
-    <link rel="preconnect" href="https://i.ytimg.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -427,7 +425,6 @@
             font-weight: 800;
             letter-spacing: -1px;
             line-height: 1.1;
-            color: var(--text-primary);
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -1124,7 +1121,6 @@
 
         .file-warning.visible { display: block; }
 
-        /* Player YouTube fallback (nascosto) */
         .yt-fallback-container {
             position: fixed;
             bottom: -400px;
@@ -1136,7 +1132,6 @@
             z-index: 1;
         }
 
-        /* Floating Player */
         .floating-player {
             position: fixed;
             bottom: 120px;
@@ -1273,6 +1268,7 @@
             background: var(--bg-input);
             border-radius: 3px;
             cursor: pointer;
+            position: relative;
         }
 
         .fp-progress-bar {
@@ -1636,7 +1632,7 @@
 
     <script>
     // ============================================================
-    // SPOTUBE - Avvio VELOCE: YouTube parte subito, audio opzionale
+    // SPOTUBE - Versione con sincronizzazione perfetta del floating player
     // ============================================================
     const app = (function() {
         const API_KEY = 'AIzaSyBIa5Se73P09TNGcSSvRNUiYgH6DJmU8T8';
@@ -1651,7 +1647,6 @@
             ['#ff7043', '#bf360c'], ['#ec407a', '#880e4f']
         ];
 
-        // SOLO i servizi più veloci e affidabili
         const FAST_SERVICES = [
             { url: (id) => `https://pipedapi.kavin.rocks/streams/${id}` },
             { url: (id) => `https://pipedapi.adminforge.de/streams/${id}` },
@@ -1845,30 +1840,21 @@
         });
 
         // ============================================================
-        // AVVIO RAPIDO DEL PLAYER YOUTUBE (già pronto)
+        // YouTube fallback
         // ============================================================
         const loadYTIframe = (videoId) => {
             const origin = window.location.origin && window.location.origin !== 'null'
                 ? window.location.origin : 'http://localhost';
-            // Uso youtube.com (più veloce di nocookie) con tutti i parametri per nascondere pubblicità/overlay
             const embedUrl = `https://www.youtube.com/embed/${videoId}`
-                + `?autoplay=1`
-                + `&rel=0`
-                + `&modestbranding=1`
-                + `&playsinline=1`
-                + `&controls=0`
-                + `&iv_load_policy=3`
-                + `&cc_load_policy=0`
-                + `&fs=0`
-                + `&disablekb=1`
+                + `?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0`
+                + `&iv_load_policy=3&cc_load_policy=0&fs=0&disablekb=1`
                 + `&enablejsapi=1`
                 + `&origin=${encodeURIComponent(origin)}`;
-
             ytFallback.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
         };
 
         // ============================================================
-        // RICERCA AUDIO (parallela, timeout corto 1.5s)
+        // RICERCA AUDIO
         // ============================================================
         const getAudioUrl = async (videoId) => {
             if (state.audioUrlCache[videoId]) {
@@ -1880,7 +1866,7 @@
 
             const fetchAudio = async (service) => {
                 const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 1500); // 1.5s timeout!
+                const timeout = setTimeout(() => controller.abort(), 1500);
                 try {
                     const res = await fetch(service.url(videoId), { signal: controller.signal });
                     clearTimeout(timeout);
@@ -1918,7 +1904,28 @@
             }
         };
 
-        const updatePlayPauseUI = () => {
+        // ============================================================
+        // SINCRONIZZAZIONE UI - FUNZIONE UNICA CHE AGGIORNA TUTTO
+        // ============================================================
+        const updateAllUI = () => {
+            // Aggiorna i tempi
+            const currentStr = formatTime(state.currentTime);
+            const totalStr = formatTime(state.duration);
+
+            // Player inferiore
+            timeCurrent.textContent = currentStr;
+            timeTotal.textContent = totalStr;
+
+            // Floating player
+            fpTimeCurrent.textContent = currentStr;
+            fpTimeTotal.textContent = totalStr;
+
+            // Barra progresso (percentuale)
+            const percent = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
+            progressBarFill.style.width = percent + '%';
+            fpProgressBarFill.style.width = percent + '%';
+
+            // Icone play/pausa
             if (state.isPlaying) {
                 playPauseIcon.className = 'fas fa-pause';
                 fpPlayPauseIcon.className = 'fas fa-pause';
@@ -1926,16 +1933,6 @@
                 playPauseIcon.className = 'fas fa-play';
                 fpPlayPauseIcon.className = 'fas fa-play';
             }
-        };
-
-        const updateProgressUI = () => {
-            const percent = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
-            progressBarFill.style.width = percent + '%';
-            fpProgressBarFill.style.width = percent + '%';
-            timeCurrent.textContent = formatTime(state.currentTime);
-            timeTotal.textContent = formatTime(state.duration);
-            fpTimeCurrent.textContent = formatTime(state.currentTime);
-            fpTimeTotal.textContent = formatTime(state.duration);
         };
 
         const applyVolume = () => {
@@ -1950,31 +1947,42 @@
             }
         };
 
+        // ============================================================
+        // PROGRESS TRACKING - Aggiorna UI ogni 250ms
+        // ============================================================
         const startProgress = () => {
             if (state.progressInterval) clearInterval(state.progressInterval);
             state.progressInterval = setInterval(() => {
                 if (!state.currentTrack) return;
+
                 if (!state.usingFallback) {
+                    // Player audio HTML5 (tempo reale)
                     state.currentTime = audioPlayer.currentTime || 0;
-                    if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
+                    if (audioPlayer.duration && !isNaN(audioPlayer.duration) && audioPlayer.duration > 0) {
                         state.duration = audioPlayer.duration;
                     }
                 } else {
-                    if (state.isPlaying && state.currentTime < state.duration) {
-                        state.currentTime += 0.5;
+                    // Player YouTube - simula avanzamento con velocità 1x (0.5s ogni 500ms)
+                    // MA solo se è effettivamente in play
+                    if (state.isPlaying) {
+                        state.currentTime = Math.min(state.currentTime + 0.25, state.duration);
                     }
                 }
-                updateProgressUI();
-            }, 500);
+
+                updateAllUI();
+            }, 250); // Aggiorna 4 volte al secondo per fluidità
         };
 
+        // ============================================================
+        // AUDIO PLAYER EVENTS
+        // ============================================================
         audioPlayer.addEventListener('play', () => {
             state.isPlaying = true;
-            updatePlayPauseUI();
+            updateAllUI();
         });
         audioPlayer.addEventListener('pause', () => {
             state.isPlaying = false;
-            updatePlayPauseUI();
+            updateAllUI();
         });
         audioPlayer.addEventListener('ended', () => {
             if (state.isRepeat) {
@@ -1987,7 +1995,13 @@
         audioPlayer.addEventListener('loadedmetadata', () => {
             if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
                 state.duration = audioPlayer.duration;
-                updateProgressUI();
+                updateAllUI();
+            }
+        });
+        audioPlayer.addEventListener('timeupdate', () => {
+            if (!state.usingFallback) {
+                state.currentTime = audioPlayer.currentTime || 0;
+                updateAllUI();
             }
         });
         audioPlayer.addEventListener('error', () => {
@@ -2011,8 +2025,7 @@
         };
 
         // ============================================================
-        // PLAY TRACK - VELOCE!
-        // Strategia: parte SUBITO il player YouTube, in background prova audio HTML5
+        // PLAY TRACK
         // ============================================================
         const playTrack = async (track, queue = null, index = -1) => {
             if (!track) return;
@@ -2029,6 +2042,7 @@
 
             state.currentTrack = track;
             state.currentTime = 0;
+            state.duration = state.durationCache[track.videoId] || 0;
             state.isPlaying = true;
 
             playerTitle.textContent = track.title;
@@ -2039,21 +2053,13 @@
             fpCover.src = track.thumbnail || DEFAULT_THUMB;
             updateFavButtonUI();
 
-            progressBarFill.style.width = '0%';
-            fpProgressBarFill.style.width = '0%';
-            timeCurrent.textContent = '0:00';
-            timeTotal.textContent = formatTime(state.durationCache[track.videoId] || 240);
-            fpTimeCurrent.textContent = '0:00';
-            fpTimeTotal.textContent = formatTime(state.durationCache[track.videoId] || 240);
+            // Reset visivo immediato
+            updateAllUI();
 
-            updatePlayPauseUI();
-
-            // ⚡⚡⚡ STRATEGIA: Avvia SUBITO il player YouTube (parirà in 2-3 secondi)
-            // In background prova a ottenere l'audio diretto
             try { audioPlayer.pause(); } catch (e) {}
             audioPlayer.removeAttribute('src');
 
-            // 1. Se c'è cache, prova prima quello
+            // CACHE
             if (state.audioUrlCache[track.videoId]) {
                 const c = state.audioUrlCache[track.videoId];
                 if (c.timestamp && (Date.now() - c.timestamp) < 30 * 60 * 1000) {
@@ -2063,6 +2069,7 @@
                     try {
                         await audioPlayer.play();
                         state.duration = state.durationCache[track.videoId] || 240;
+                        updateAllUI();
                         startProgress();
                         addToHistory(track);
                         if (state.view === 'history') renderHistory();
@@ -2073,38 +2080,28 @@
                 }
             }
 
-            // 2. AVVIA SUBITO il player YouTube (garantisce avvio in 2-3 sec)
+            // Avvia subito YouTube come fallback
             state.usingFallback = true;
             loadYTIframe(track.videoId);
+            sendYT('setVolume', String(state.isMuted ? 0 : Math.round(state.volume)));
 
-            // 3. In background, cerca l'audio HTML5 (timeout 1.5s)
+            // In background, cerca audio HTML5
             getAudioUrl(track.videoId).then(url => {
-                // Se l'utente ha già cambiato brano, ignora
                 if (playId !== state.currentPlayId) return;
-                // Se l'URL è stato trovato abbastanza velocemente
                 if (url) {
-                    console.log('🎵 Audio HTML5 disponibile, passo al player nativo');
                     state.usingFallback = false;
                     state.duration = state.durationCache[track.videoId] || 240;
                     audioPlayer.src = url;
                     audioPlayer.volume = state.isMuted ? 0 : state.volume / 100;
-
-                    // Prova a riprodurre
                     audioPlayer.play().then(() => {
-                        // Ferma il player YouTube
                         sendYT('pauseVideo');
                         ytFallback.innerHTML = '';
-                        console.log('▶️ Audio HTML5 attivo');
+                        updateAllUI();
                     }).catch(() => {
-                        // Se fallisce, torna al player YouTube
                         state.usingFallback = true;
                         loadYTIframe(track.videoId);
                     });
-                } else {
-                    console.log('⚠️ Audio HTML5 non disponibile, uso YouTube');
                 }
-            }).catch(() => {
-                // In caso di errore, resta sul player YouTube
             });
 
             startProgress();
@@ -2114,6 +2111,11 @@
             fetchDuration(track.videoId).then(d => {
                 if (playId === state.currentPlayId) {
                     state.durationCache[track.videoId] = d;
+                    // Aggiorna la durata mostrata se è ancora 0
+                    if (!state.duration || state.duration < 1) {
+                        state.duration = d;
+                        updateAllUI();
+                    }
                     try { localStorage.setItem('spotube_duration_cache', JSON.stringify(state.durationCache)); } catch (e) {}
                 }
             });
@@ -2128,7 +2130,7 @@
                 state.isPlaying = !state.isPlaying;
                 if (state.isPlaying) sendYT('playVideo');
                 else sendYT('pauseVideo');
-                updatePlayPauseUI();
+                updateAllUI();
             } else {
                 if (audioPlayer.paused) audioPlayer.play().catch(() => {});
                 else audioPlayer.pause();
@@ -2152,7 +2154,7 @@
                 if (state.usingFallback) sendYT('seekTo', '0');
                 else audioPlayer.currentTime = 0;
                 state.currentTime = 0;
-                updateProgressUI();
+                updateAllUI();
                 return;
             }
             let p = state.currentQueueIndex - 1;
@@ -2170,7 +2172,9 @@
             repeatBtn.classList.toggle('active', state.isRepeat);
         };
 
+        // ============================================================
         // FLOATING PLAYER
+        // ============================================================
         let isDragging = false;
         let dragOffsetX = 0;
         let dragOffsetY = 0;
@@ -2244,6 +2248,8 @@
             }
             floatingPlayer.classList.add('visible');
             floatingToggle.classList.remove('visible');
+            // Aggiorna subito i dati al momento dell'apertura
+            updateAllUI();
             setTimeout(applySavedPosition, 50);
         };
 
@@ -2269,7 +2275,7 @@
             const rect = fpProgressBar.getBoundingClientRect();
             const p = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
             state.currentTime = p * state.duration;
-            updateProgressUI();
+            updateAllUI();
             if (state.usingFallback) sendYT('seekTo', String(Math.floor(state.currentTime)));
             else { try { audioPlayer.currentTime = state.currentTime; } catch (err) {} }
         });
@@ -2292,7 +2298,9 @@
             }
         });
 
+        // ============================================================
         // VOLUME
+        // ============================================================
         const setVolumeFromEvent = (e) => {
             const rect = volumeSlider.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -2337,13 +2345,16 @@
             saveStorage();
         });
 
+        // ============================================================
+        // SEEK
+        // ============================================================
         let progressDragging = false;
         const seekFromEvent = (e) => {
             const rect = progressBar.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
             const p = Math.max(0, Math.min(100, (x / rect.width) * 100));
             state.currentTime = (p / 100) * state.duration;
-            updateProgressUI();
+            updateAllUI();
             if (state.usingFallback) sendYT('seekTo', String(Math.floor(state.currentTime)));
             else { try { audioPlayer.currentTime = state.currentTime; } catch (err) {} }
         };
